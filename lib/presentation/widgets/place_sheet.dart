@@ -10,6 +10,7 @@ import '../../core/utils/format.dart';
 import '../../data/models/budget_models.dart';
 import '../../data/models/place.dart';
 import '../../providers/budget_providers.dart';
+import '../../data/services/scope_service.dart';
 import '../place_nav.dart';
 import 'async_view.dart';
 import 'district_tile.dart';
@@ -132,8 +133,7 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
                   onChanged: _onChanged,
                   textInputAction: TextInputAction.search,
                   decoration: InputDecoration(
-                    hintText:
-                        'Province, city, municipality, district or region',
+                    hintText: 'Region',
                     prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: value.text.isEmpty
                         ? null
@@ -149,18 +149,14 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
                 ),
               ),
             ),
-            Expanded(
-              child: _q.isEmpty
-                  ? _regions(place)
-                  : _searchResults(place, needle),
-            ),
+            Expanded(child: _regions(place, needle)),
           ],
         ),
       ),
     );
   }
 
-  Widget _regions(PlaceSelection place) {
+  Widget _regions(PlaceSelection place, String needle) {
     final regions = ref.watch(regionsProvider);
     return AsyncView<RegionsPage>(
       value: regions,
@@ -168,157 +164,119 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
       onRetry: () => ref.invalidate(regionsProvider),
       builder: (context, page) {
         final byKey = {for (final region in page.regions) region.key: region};
+        final groups = <(String, List<RegionRow>)>[];
+        for (final group in _regionGroups) {
+          final matches = [
+            for (final key in group.$2)
+              if (byKey[key] != null && _matchesRegion(byKey[key]!, needle))
+                byKey[key]!,
+          ];
+          if (matches.isNotEmpty) groups.add((group.$1, matches));
+        }
+
         return ListView(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
           children: [
-            _AllPhilippinesTile(
-              selected: place is NationalPlace,
-              onTap: () => _choose(const NationalPlace()),
-            ),
-            for (final group in _regionGroups) ...[
+            if (needle.isEmpty)
+              _AllPhilippinesTile(
+                selected: place is NationalPlace,
+                onTap: () => _choose(const NationalPlace()),
+              ),
+            if (needle.isNotEmpty && groups.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Text(
+                  'No region matches "$_q".',
+                  textAlign: TextAlign.center,
+                  style: AppTheme.meta(context, size: 12.5),
+                ),
+              ),
+            for (final group in groups) ...[
               SectionLabel(group.$1),
-              for (final key in group.$2)
-                if (byKey[key] != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _RegionTile(
-                      region: byKey[key]!,
-                      onTap:
-                          (byKey[key]!.nepPhp == null &&
-                              byKey[key]!.housePhp == null)
-                          ? null
-                          : () => _choose(
-                              RegionPlace(
-                                key: byKey[key]!.key,
-                                label: byKey[key]!.label,
-                                name: byKey[key]!.name,
+              for (final region in group.$2)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _RegionTile(
+                    region: region,
+                    onTap: region.nepPhp == null && region.housePhp == null
+                        ? null
+                        : () => _choose(
+                            RegionPlace(
+                              key: region.key,
+                              label: region.label,
+                              name: region.name,
+                            ),
+                          ),
+                  ),
+                ),
+            ],
+            if (needle.isNotEmpty) ...[
+              const SectionLabel('Legislative districts'),
+              AsyncView<DistrictSearch>(
+                value: ref.watch(districtSearchProvider(_q)),
+                loadingLabel: 'Looking for districts…',
+                onRetry: () => ref.invalidate(districtSearchProvider(_q)),
+                builder: (context, search) {
+                  if (search.districts.isEmpty) {
+                    return Text(
+                      'No district is named "$_q", and no published office '
+                      'builds a line naming it. Every district is reachable '
+                      'inside its region.',
+                      style: AppTheme.meta(context, size: 12.5),
+                    );
+                  }
+                  final caption = switch (search.match) {
+                    DistrictMatch.office =>
+                      'No district is named "$_q". These are the districts '
+                          'whose offices build the lines naming it.',
+                    DistrictMatch.province =>
+                      'The API does not say which district contains "$_q". '
+                          'These are the districts of ${search.province}: '
+                          'the candidate is among them.',
+                    _ => null,
+                  };
+                  return Column(
+                    children: [
+                      for (final district in search.districts)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: DistrictTile(
+                            district: district,
+                            selected:
+                                place is DistrictPlace &&
+                                place.id == district.id,
+                            onTap: () => _choose(
+                              DistrictPlace(
+                                id: district.id,
+                                label: district.label,
+                                jurisdiction: district.jurisdiction,
+                                regionKey: district.regionKey,
                               ),
                             ),
-                    ),
-                  ),
+                          ),
+                        ),
+                      if (caption != null)
+                        Text(
+                          caption,
+                          style: AppTheme.meta(context, size: 11.5),
+                        ),
+                    ],
+                  );
+                },
+              ),
             ],
             const SizedBox(height: 8),
             Text(
-              'Region totals follow the DPWH region each document lists. '
-              'Search for a district, city or municipality to narrow further.',
+              needle.isEmpty
+                  ? 'Region totals follow the DPWH region each document '
+                        'lists. Districts are available inside a region.'
+                  : 'Search finds the 18 regions. Districts and their offices '
+                        'are available inside a region.',
               style: AppTheme.meta(context, size: 11.5),
             ),
           ],
         );
       },
-    );
-  }
-
-  Widget _searchResults(PlaceSelection place, String needle) {
-    final regions = ref.watch(regionsProvider);
-    final districts = ref.watch(districtsProvider(_q));
-    final matches = ref.watch(nameMatchesProvider(_q));
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-      children: [
-        const SectionLabel('Cities and municipalities'),
-        _ChoiceTile(
-          icon: Icons.location_city,
-          title: 'Town or city named "$_q"',
-          subtitle: matches.when(
-            data: (data) => data.lines == 0
-                ? 'No 2027 line names it. Open the search anyway to check the enacted budgets.'
-                : '${plural(data.lines, '2027 line')} name it in '
-                      '${plural(data.programs, 'program')}. Every line whose '
-                      'title says it, plus the enacted budgets.',
-            loading: () => 'Searching every 2027 line for the name…',
-            error: (_, _) =>
-                'Every line whose title says it, plus the enacted budgets',
-          ),
-          selected: place is NamedPlace && place.q == _q,
-          onTap: () => _choose(NamedPlace(q: _q, label: titleCasePlace(_q))),
-        ),
-        const SectionLabel('Legislative districts'),
-        AsyncView<DistrictPage>(
-          value: districts,
-          loadingLabel: 'Reading the 254 districts…',
-          onRetry: () => ref.invalidate(districtsProvider(_q)),
-          builder: (context, page) {
-            if (page.districts.isEmpty) {
-              return Text(
-                'No legislative district is named "$_q". A city or municipality '
-                'can still appear through the names of its lines - see above.',
-                style: AppTheme.meta(context, size: 12.5),
-              );
-            }
-            return Column(
-              children: [
-                for (final district in page.districts)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: DistrictTile(
-                      district: district,
-                      selected:
-                          place is DistrictPlace && place.id == district.id,
-                      onTap: () => _choose(
-                        DistrictPlace(
-                          id: district.id,
-                          label: district.label,
-                          jurisdiction: district.jurisdiction,
-                          regionKey: district.regionKey,
-                        ),
-                      ),
-                    ),
-                  ),
-                if (page.total > page.districts.length)
-                  Text(
-                    'Showing ${page.districts.length} of ${page.total} districts. Type more of the name to narrow the list.',
-                    style: AppTheme.meta(context, size: 11.5),
-                  ),
-              ],
-            );
-          },
-        ),
-        const SectionLabel('Regions'),
-        AsyncView<RegionsPage>(
-          value: regions,
-          loadingLabel: 'Reading the 18 regions…',
-          onRetry: () => ref.invalidate(regionsProvider),
-          builder: (context, page) {
-            final matches = page.regions
-                .where((region) => _matchesRegion(region, needle))
-                .toList();
-            if (matches.isEmpty) {
-              return Text(
-                'No region matches "$_q".',
-                style: AppTheme.meta(context, size: 12.5),
-              );
-            }
-            return Column(
-              children: [
-                for (final region in matches)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _RegionTile(
-                      region: region,
-                      onTap: region.nepPhp == null && region.housePhp == null
-                          ? null
-                          : () => _choose(
-                              RegionPlace(
-                                key: region.key,
-                                label: region.label,
-                                name: region.name,
-                              ),
-                            ),
-                    ),
-                  ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 10),
-        Text(
-          'City and municipal boundaries are not in the API. A town appears '
-          'through the 2027 lines and enacted programs whose name says it.',
-          style: AppTheme.meta(context, size: 11.5),
-        ),
-      ],
     );
   }
 }
@@ -370,65 +328,6 @@ class _AllPhilippinesTile extends StatelessWidget {
                 Icon(Icons.check_circle, size: 20, color: colors.accent)
               else
                 Icon(Icons.chevron_right, size: 20, color: colors.inkMute),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ChoiceTile extends StatelessWidget {
-  const _ChoiceTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: selected ? colors.accent : colors.ruleSoft),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-          child: Row(
-            children: [
-              Icon(icon, size: 20, color: colors.accent),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: colors.ink,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(subtitle, style: AppTheme.meta(context, size: 11.5)),
-                  ],
-                ),
-              ),
-              if (selected)
-                Icon(Icons.check_circle, size: 20, color: colors.accent),
             ],
           ),
         ),

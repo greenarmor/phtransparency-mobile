@@ -1,10 +1,10 @@
 # BetterGov Budget (mobile)
 
 A mobile view of the [BetterGov.ph budget transparency portal](https://budget.bettergov.ph)
-for **every place in the Philippines**: browse all 254 legislative districts, every
-region, or search any province, city or municipality by name. Each view answers what the
-place gets in FY 2027 under the NEP and under the House bill, with the page each figure
-is on, and what has been enacted for it since 2020.
+for **every place in the Philippines**: the 18 regions, and inside them the 254
+legislative districts. Each view answers what the place gets in FY 2027 under the NEP and
+under the House bill, with the page each figure is on, and what has been enacted for it
+since 2020.
 
 ## Coverage
 
@@ -13,8 +13,9 @@ is on, and what has been enacted for it since 2020.
 - **Region** - every DPWH line under that region, compared across versions.
 - **Legislative district** - the DPWH ledger of every office that serves the district.
   Shared (Tier B) offices are shown whole and never split.
-- **Any place by name** - every 2027 line whose title names it, across all four
-  programs, plus every enacted program whose name names it.
+The place search is region-only on purpose: the API has no city or municipality
+dimension, so a name search would mix every line that merely mentions the words (Cebu
+City pulling in Mandaue, Lapu-Lapu and even NCR) and the totals would be wrong.
 
 ## Data
 
@@ -52,8 +53,7 @@ the DBM General Appropriations Acts. Host override: `--dart-define=API_BASE=…`
 
 - The API places DPWH money by **office**, and other lines by the place their **title**
   names. It does not yet say which city or municipality a project is in, so a district
-  view is the offices' ledger, and a name search finds only lines that spell the place
-  out.
+  view is the offices' ledger, and there is no city-level view to offer.
 - The GAA (2020–2026) has no region filter; a region view shows national totals, stated
   on the screen.
 - Region totals cover DPWH infrastructure only; the other three programs are not

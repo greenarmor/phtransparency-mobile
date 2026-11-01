@@ -95,6 +95,7 @@ class ScopeResult {
     required this.truncated,
     required this.national,
     required this.note,
+    this.district,
   });
 
   final List<ScopedProject> projects;
@@ -104,6 +105,27 @@ class ScopeResult {
   final bool truncated;
   final bool national;
   final String? note;
+  final DistrictDetail? district;
+}
+
+enum DistrictMatch { name, office, province, none }
+
+class DistrictSearch {
+  const DistrictSearch({
+    required this.districts,
+    required this.match,
+    this.province,
+  });
+
+  final List<DistrictSummary> districts;
+  final DistrictMatch match;
+  final String? province;
+}
+
+bool isDistrictOfficeName(String name) {
+  final lower = name.toLowerCase();
+  return !lower.contains('central office') &&
+      !lower.contains('regional office');
 }
 
 int scopedAmount(ScopedProject item) =>
@@ -202,7 +224,6 @@ class ScopeService {
 
   Future<ScopeResult> _district(DistrictPlace place) async {
     final detail = await _api.district(place.id);
-    final card = detail.data.card;
     final jobs = <_Job>[];
 
     for (final office in detail.data.offices) {
@@ -218,15 +239,6 @@ class ScopeService {
       );
     }
 
-    final q = card.jurisdiction.isNotEmpty
-        ? card.jurisdiction
-        : place.jurisdiction;
-    for (final dataset in AppConfig.datasets) {
-      jobs.add(
-        _Job(kind: 'place', label: q, dataset: dataset, filters: {'q': q}),
-      );
-    }
-
     final result = await _fromJobs(jobs);
     return ScopeResult(
       projects: result.projects,
@@ -238,6 +250,68 @@ class ScopeService {
       note: detail.data.sharedOfficeTotal
           ? 'A shared office total is shown whole. Its money is never split between the districts it serves.'
           : null,
+      district: detail.data,
+    );
+  }
+
+  Future<DistrictSearch> searchDistricts(String q) async {
+    final needle = q.trim();
+    if (needle.isEmpty) {
+      return const DistrictSearch(districts: [], match: DistrictMatch.none);
+    }
+
+    final direct = await _api.districts(q: needle, limit: 20);
+    if (direct.data.districts.isNotEmpty) {
+      return DistrictSearch(
+        districts: direct.data.districts,
+        match: DistrictMatch.name,
+      );
+    }
+
+    final rows = await _api.projectRowsFor(needle);
+    final offices = <String>{};
+    for (final row in rows) {
+      final office = row.office;
+      if (office != null && isDistrictOfficeName(office)) offices.add(office);
+    }
+
+    final byOffice = <String, DistrictSummary>{};
+    for (final office in offices.take(4)) {
+      final page = await _api.districts(q: office, limit: 5);
+      for (final district in page.data.districts) {
+        byOffice.putIfAbsent(district.id, () => district);
+      }
+    }
+    if (byOffice.isNotEmpty) {
+      return DistrictSearch(
+        districts: byOffice.values.toList(),
+        match: DistrictMatch.office,
+      );
+    }
+
+    final titles = rows.map((row) => row.title).join(' ').toLowerCase();
+    if (titles.isEmpty) {
+      return const DistrictSearch(districts: [], match: DistrictMatch.none);
+    }
+    final all = await _api.districts(limit: 254);
+    final provinces = <String>{};
+    for (final district in all.data.districts) {
+      final jurisdiction = district.jurisdiction.trim();
+      if (jurisdiction.isEmpty) continue;
+      if (titles.contains(jurisdiction.toLowerCase())) {
+        provinces.add(jurisdiction);
+      }
+    }
+    final candidates = all.data.districts
+        .where((district) => provinces.contains(district.jurisdiction))
+        .toList();
+    if (candidates.isEmpty) {
+      return const DistrictSearch(districts: [], match: DistrictMatch.none);
+    }
+    return DistrictSearch(
+      districts: candidates,
+      match: DistrictMatch.province,
+      province: provinces.join(', '),
     );
   }
 

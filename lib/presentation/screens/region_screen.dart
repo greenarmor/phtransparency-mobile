@@ -6,6 +6,7 @@ import '../../core/config/app_config.dart';
 import '../../core/firebase/analytics.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/format.dart';
+import '../../data/models/budget_models.dart';
 import '../../data/models/place.dart';
 import '../../data/services/scope_service.dart';
 import '../../providers/budget_providers.dart';
@@ -80,7 +81,13 @@ class _RegionMoneyScreenState extends ConsumerState<RegionMoneyScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             sliver: SliverList.list(
               children: [
-                _SummaryCard(summary: result.summary, scopeName: place.title),
+                if (place is DistrictPlace && result.district != null)
+                  _DistrictScopeCard(
+                    detail: result.district!,
+                    summary: result.summary,
+                  )
+                else
+                  _SummaryCard(summary: result.summary, scopeName: place.title),
                 const SizedBox(height: 14),
                 StatusGrid(
                   counts: {
@@ -416,6 +423,130 @@ class _ViewToggle extends StatelessWidget {
             TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DistrictScopeCard extends StatelessWidget {
+  const _DistrictScopeCard({required this.detail, required this.summary});
+
+  final DistrictDetail detail;
+  final Summary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final card = detail.card;
+    final offices = detail.offices.map((office) => office.name).join(', ');
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'FY 2027 · ${card.label.toUpperCase()}',
+              maxLines: 2,
+              style: TextStyle(
+                fontSize: 10.5,
+                letterSpacing: 0.9,
+                fontWeight: FontWeight.w700,
+                color: colors.ink3,
+              ),
+            ),
+            const SizedBox(height: 12),
+            _Fact('Jurisdiction', card.jurisdiction),
+            _Fact('Region', card.region),
+            _Fact(
+              'Tier',
+              card.attributionLabel.isEmpty ? null : card.attributionLabel,
+            ),
+            _Fact('Serving offices', offices),
+            const Divider(height: 22),
+            Text(
+              '${plural(summary.rows, 'line')} · '
+              '${plural(summary.nepRows, 'NEP line')} · '
+              '${plural(summary.houseRows, 'House line')}'
+              '${summary.unconfirmed > 0 ? ' · ${summary.unconfirmed} to check' : ''}',
+              style: AppTheme.meta(context, size: 12.5),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text('Office ledger', style: AppTheme.meta(context, size: 12)),
+                const Spacer(),
+                AmountText(summary.nepPhp, size: 13.5),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Text('vs', style: AppTheme.meta(context, size: 11)),
+                ),
+                AmountText(summary.housePhp, size: 13.5),
+                const SizedBox(width: 6),
+                Text('House', style: AppTheme.meta(context, size: 11)),
+              ],
+            ),
+            if (card.nep2027 != null) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'NEP, whole office as published',
+                      style: AppTheme.meta(context, size: 11.5),
+                    ),
+                  ),
+                  AmountText(card.nep2027, size: 12.5),
+                ],
+              ),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              'The API publishes money by office, not by district: the line '
+              'figures above are the named projects of the serving offices, '
+              'and the whole-office NEP includes amounts with no project line.'
+              '${detail.sharedOfficeTotal ? ' This office serves several '
+                        'districts, so its total is shown whole and never split.' : ''}',
+              style: AppTheme.meta(context, size: 11.5),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Fact extends StatelessWidget {
+  const _Fact(this.label, this.value);
+
+  final String label;
+  final String? value;
+
+  @override
+  Widget build(BuildContext context) {
+    if (value == null || value!.isEmpty) return const SizedBox.shrink();
+    final colors = context.colors;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 104,
+            child: Text(label, style: AppTheme.meta(context, size: 12)),
+          ),
+          Expanded(
+            child: Text(
+              value!,
+              style: TextStyle(
+                fontSize: 12.5,
+                height: 1.35,
+                color: colors.ink2,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

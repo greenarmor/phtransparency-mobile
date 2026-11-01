@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_theme.dart';
-import '../../core/utils/format.dart';
 import '../../data/models/budget_models.dart';
 import '../../data/models/place.dart';
 import '../../providers/budget_providers.dart';
@@ -60,9 +59,6 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
     final districts = ref.watch(districtsProvider(_q));
     final regions = ref.watch(regionsProvider);
     final named = _q.trim();
-    final matches = named.isEmpty
-        ? null
-        : ref.watch(nameMatchesProvider(named));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Choose a place')),
@@ -74,7 +70,7 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
             onChanged: _onChanged,
             textInputAction: TextInputAction.search,
             decoration: InputDecoration(
-              hintText: 'Province, city, municipality or district',
+              hintText: 'Province or district',
               prefixIcon: const Icon(Icons.search, size: 20),
               suffixIcon: _search.text.isEmpty
                   ? null
@@ -95,26 +91,6 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
             selected: current is NationalPlace,
             onTap: () => _select(const NationalPlace()),
           ),
-          if (named.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            _ChoiceTile(
-              icon: Icons.location_city,
-              title: 'Town or city named "$named"',
-              subtitle: matches!.when(
-                data: (data) => data.lines == 0
-                    ? 'No 2027 line names it. Open the search anyway to check the enacted budgets.'
-                    : '${plural(data.lines, '2027 line')} name it in '
-                          '${plural(data.programs, 'program')}. Every line whose '
-                          'title says it, plus the enacted budgets.',
-                loading: () => 'Searching every 2027 line for the name…',
-                error: (_, _) =>
-                    'Every line whose title says it, plus the enacted budgets',
-              ),
-              selected: current is NamedPlace && current.q == named,
-              onTap: () =>
-                  _select(NamedPlace(q: named, label: titleCasePlace(named))),
-            ),
-          ],
           const SectionLabel('Regions'),
           AsyncView<RegionsPage>(
             value: regions,

@@ -120,13 +120,19 @@ class BudgetApi {
     );
   }
 
-  Future<int> projectMatchCount(String dataset, String q) async {
+  Future<List<ProjectRow>> projectRowsFor(String q, {int limit = 200}) async {
     final json = await _client.getJson(
-      '$_root/datasets/$dataset/projects',
-      query: {'q': q, 'limit': 1},
+      '$_root/datasets/dpwh/projects',
+      query: {'q': q, 'limit': limit},
     );
     final data = json['data'];
-    return data is Map ? asInt(data['total']) ?? 0 : 0;
+    if (data is! Map) return const [];
+    final rows = data['rows'];
+    if (rows is! List) return const [];
+    return rows
+        .whereType<Map>()
+        .map((row) => ProjectRow.fromJson(row.cast<String, dynamic>()))
+        .toList();
   }
 
   Future<Envelope<DistrictPage>> districts({
