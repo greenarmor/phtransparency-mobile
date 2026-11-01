@@ -50,3 +50,10 @@ android/key.properties
 android/app/upload-keystore.jks
 *.jks
 *.keystore
+
+# Firebase project artifacts - each build brings its own project
+lib/firebase_options.dart
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+.firebaserc
+firebase.json
