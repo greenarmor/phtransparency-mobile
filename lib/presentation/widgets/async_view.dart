@@ -46,7 +46,7 @@ class LoadingView extends StatelessWidget {
               child: CircularProgressIndicator(strokeWidth: 2.4),
             ),
             const SizedBox(height: 16),
-            Text(label, style: AppTheme.meta()),
+            Text(label, style: AppTheme.meta(context)),
           ],
         ),
       ),
@@ -62,21 +62,26 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(28),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off, size: 40, color: AppTheme.inkMute),
+            Icon(Icons.cloud_off, size: 40, color: colors.inkMute),
             const SizedBox(height: 12),
             Text(
               'Could not read the budget data',
               textAlign: TextAlign.center,
-              style: AppTheme.cardTitle(size: 16),
+              style: AppTheme.cardTitle(context, size: 16),
             ),
             const SizedBox(height: 6),
-            Text(message, textAlign: TextAlign.center, style: AppTheme.meta()),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: AppTheme.meta(context),
+            ),
             if (onRetry != null) ...[
               const SizedBox(height: 20),
               FilledButton.icon(

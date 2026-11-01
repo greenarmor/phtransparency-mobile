@@ -46,3 +46,7 @@ app.*.map.json
 
 # Local dev logs (never commit)
 .dev-logs/
+android/key.properties
+android/app/upload-keystore.jks
+*.jks
+*.keystore

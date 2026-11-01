@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/app_config.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/links.dart';
+import '../../core/utils/format.dart';
 import '../../data/models/budget_models.dart';
+import '../../data/models/place.dart';
+import '../../data/services/scope_service.dart';
 import '../../providers/budget_providers.dart';
 import '../widgets/async_view.dart';
 import '../widgets/common.dart';
@@ -14,126 +17,112 @@ class AboutScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final overview = ref.watch(overviewProvider);
+    final colors = context.colors;
+    final place = ref.watch(placeProvider);
+    final scope = ref.watch(scopeProvider);
+    final result = scope.asData?.value;
+    final notice = ref.watch(overviewProvider).asData?.value.meta.notice;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('About the data')),
+      appBar: AppBar(title: const Text('About')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
         children: [
           Text(
-            AppConfig.appName,
-            style: const TextStyle(
+            place.title,
+            style: TextStyle(
               fontSize: 24,
               height: 1.2,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.4,
-              color: AppTheme.ink,
+              color: colors.ink,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
+          Text(place.subtitle, style: AppTheme.meta(context, size: 12.5)),
+          const SizedBox(height: 16),
+          _ScopeCard(place: place, result: result, loading: scope.isLoading),
+          if (result?.note != null) ...[
+            const SizedBox(height: 10),
+            NoteCard(
+              title: 'Reading this view',
+              body: result!.note!,
+              tint: colors.neutral,
+            ),
+          ],
+          if (result?.truncated ?? false) ...[
+            const SizedBox(height: 10),
+            NoteCard(
+              title: 'This view is capped',
+              body:
+                  'The API returned more rows than one view should hold, so the '
+                  'list stops at 4,000 lines. Narrow the place to see the rest.',
+              icon: Icons.warning_amber_outlined,
+              tint: colors.neutral,
+            ),
+          ],
+          if (result != null && result.disclaimers.isNotEmpty) ...[
+            const SectionHeading(title: 'How to read this view'),
+            for (final disclaimer in result.disclaimers)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: NoteCard(
+                  title: disclaimer.title,
+                  body: disclaimer.body,
+                  icon: Icons.gavel_outlined,
+                ),
+              ),
+          ],
+          const SectionHeading(title: 'About the app'),
           Text(
-            'A mobile view of the BetterGov.ph budget transparency portal, for '
-            'every place in the Philippines. Browse all 254 legislative '
-            'districts, every region, or search any city, municipality or '
-            'province by name: FY ${AppConfig.fiscalYear} projects in the NEP '
-            'and the House bill, with the page each figure is on, and the '
-            'enacted budgets 2020–2026.',
-            style: AppTheme.meta(size: 13),
+            'A mobile view of the BetterGov.ph budget transparency portal for '
+            'every place in the Philippines: FY ${AppConfig.fiscalYear} '
+            'projects in the NEP and the House bill, with the page each figure '
+            'is on, and the enacted budgets 2020–2026.',
+            style: AppTheme.meta(context, size: 13),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
           AsyncView<Overview>(
-            value: overview,
+            value: ref.watch(overviewProvider),
             loadingLabel: 'Reading the source notes…',
             onRetry: () => ref.invalidate(overviewProvider),
-            builder: (context, data) => _OverviewBody(overview: data),
+            builder: (context, overview) => _FactsCard(overview: overview),
           ),
-          const SectionHeading(title: 'Where the numbers come from'),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Row('API', AppConfig.apiBase),
-                  const Divider(height: 18),
-                  _Row(
-                    'Source of the comparison',
-                    'github.com/csiiiv/DPWH-NEP-HB-2027-ANALYSIS',
-                  ),
-                  const Divider(height: 18),
-                  const Text(
-                    'The 2027 figures are an independent reading of the '
-                    'published NEP and House Bill 10858, republished through '
-                    'the BetterGov.ph Budget API. The enacted budgets 2020–2026 '
-                    'are the DBM General Appropriations Acts.',
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      height: 1.45,
-                      color: AppTheme.ink2,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  OutlinedButton.icon(
-                    onPressed: () => _open(AppConfig.sourceUrl),
-                    icon: const Icon(Icons.open_in_new, size: 16),
-                    label: const Text('Open the national portal'),
-                  ),
-                ],
-              ),
-            ),
+          const NoteCard(
+            title: 'Usage events and crash reports',
+            body:
+                'Opening a project or a tab records an anonymous event, and a '
+                'crash sends a report, both to Firebase. The app has no account, '
+                'no location access, no ads and no tracking beyond those events.',
+            icon: Icons.privacy_tip_outlined,
           ),
           const SectionHeading(title: 'Rules this app keeps'),
-          for (final rule in _defaultRules)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Container(
-                padding: const EdgeInsets.all(13),
-                decoration: BoxDecoration(
-                  color: AppTheme.paper,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppTheme.ruleSoft),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 1),
-                      child: Icon(
-                        Icons.check,
-                        size: 15,
-                        color: AppTheme.accent,
-                      ),
-                    ),
-                    const SizedBox(width: 9),
-                    Expanded(
-                      child: Text(
-                        rule,
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          height: 1.45,
-                          color: AppTheme.ink2,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          const SectionHeading(title: 'Reporting'),
-          const NoteCard(
-            title: 'Coming to budget.bettergov.ph',
-            body:
-                'Citizen reports will go to one central service for every '
-                'portal. This app will link to it with the project reference; '
-                'it does not collect reports itself.',
-            icon: Icons.flag_outlined,
+          const _BulletCard(rules: _appRules),
+          const SizedBox(height: 10),
+          AsyncView<Overview>(
+            value: ref.watch(overviewProvider),
+            loadingLabel: 'Reading the API’s rules…',
+            onRetry: () => ref.invalidate(overviewProvider),
+            builder: (context, overview) => overview.rules.isEmpty
+                ? const SizedBox.shrink()
+                : _BulletCard(
+                    title: 'Rules the API publishes, word for word',
+                    rules: overview.rules,
+                  ),
           ),
+          if (notice != null && notice.isNotEmpty) ...[
+            const SectionHeading(title: 'Published notice'),
+            NoteCard(
+              title: 'From the API',
+              body: notice,
+              icon: Icons.verified_outlined,
+            ),
+          ],
           const SizedBox(height: 18),
           Text(
             'Built on the public BetterGov.ph Budget API. '
             'Independent and unofficial.',
-            style: AppTheme.meta(size: 11.5),
+            style: AppTheme.meta(context, size: 11.5),
           ),
         ],
       ),
@@ -141,75 +130,155 @@ class AboutScreen extends ConsumerWidget {
   }
 }
 
-class _OverviewBody extends StatelessWidget {
-  const _OverviewBody({required this.overview});
+class _ScopeCard extends StatelessWidget {
+  const _ScopeCard({
+    required this.place,
+    required this.result,
+    required this.loading,
+  });
+
+  final PlaceSelection place;
+  final ScopeResult? result;
+  final bool loading;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final lines = result?.summary.rows;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'This view',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: colors.ink,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _Row('Scope', placeKindLabel(place)),
+            _Row('What is counted', placeScopeDescription(place)),
+            _Row(
+              'Project lines',
+              place is NationalPlace
+                  ? 'Nationwide totals, read on the home page'
+                  : lines == null
+                  ? (loading ? 'Reading…' : dash)
+                  : plural(lines, 'line'),
+            ),
+            _Row(
+              'Programs',
+              '${AppConfig.datasets.length} · DPWH, farm-to-market roads, '
+                  'health facilities, irrigation',
+            ),
+            const SizedBox(height: 6),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FactsCard extends StatelessWidget {
+  const _FactsCard({required this.overview});
 
   final Overview overview;
 
   @override
   Widget build(BuildContext context) {
     final meta = overview.meta;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Row('Version', AppConfig.appVersion),
+            _Row('Budget API', AppConfig.apiBase),
+            _Row('Comparison source', AppConfig.sourceRepo),
+            _Row('Source commit', _shortCommit(meta.sourceCommit)),
+            _Row('Built', shortDate(meta.builtAt)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
               children: [
-                const Text(
-                  'The dataset',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.ink,
-                  ),
+                OutlinedButton.icon(
+                  onPressed: () => openExternal(AppConfig.sourceUrl),
+                  icon: const Icon(Icons.open_in_new, size: 16),
+                  label: const Text('Open the portal'),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  overview.summary,
-                  style: const TextStyle(
-                    fontSize: 12.5,
-                    height: 1.45,
-                    color: AppTheme.ink2,
-                  ),
+                OutlinedButton.icon(
+                  onPressed: () => openExternal(AppConfig.docsUrl),
+                  icon: const Icon(Icons.menu_book_outlined, size: 16),
+                  label: const Text('API docs'),
                 ),
-                const Divider(height: 22),
-                _Row('Source commit', _shortCommit(meta.sourceCommit)),
-                _Row('Built', meta.builtAt),
               ],
             ),
-          ),
+          ],
         ),
-        const SectionHeading(title: 'The API’s own rules'),
-        for (final rule in overview.rules)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: NoteCard(title: '', body: rule),
-          ),
-        if (overview.disclaimers.isNotEmpty) ...[
-          const SectionHeading(title: 'Notices'),
-          for (final disclaimer in overview.disclaimers)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: NoteCard(
-                title: disclaimer.title,
-                body: disclaimer.body,
-                icon: Icons.gavel_outlined,
+      ),
+    );
+  }
+}
+
+class _BulletCard extends StatelessWidget {
+  const _BulletCard({required this.rules, this.title});
+
+  final List<String> rules;
+  final String? title;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (title != null) ...[
+              Text(
+                title!,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: colors.ink,
+                ),
               ),
-            ),
-        ],
-        if (meta.notice.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          NoteCard(
-            title: 'Published notice',
-            body: meta.notice,
-            icon: Icons.verified_outlined,
-          ),
-        ],
-        const SizedBox(height: 8),
-      ],
+              const SizedBox(height: 8),
+            ],
+            for (final rule in rules)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(Icons.check, size: 14, color: colors.accent),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        rule,
+                        style: TextStyle(
+                          fontSize: 12.5,
+                          height: 1.45,
+                          color: colors.ink2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -222,23 +291,20 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 130,
-            child: Text(label, style: AppTheme.meta(size: 12)),
+            width: 118,
+            child: Text(label, style: AppTheme.meta(context, size: 12)),
           ),
           Expanded(
             child: Text(
-              value ?? '-',
-              style: const TextStyle(
-                fontSize: 12.5,
-                height: 1.4,
-                color: AppTheme.ink2,
-              ),
+              value ?? dash,
+              style: TextStyle(fontSize: 12.5, height: 1.4, color: colors.ink2),
             ),
           ),
         ],
@@ -248,27 +314,21 @@ class _Row extends StatelessWidget {
 }
 
 String _shortCommit(String? commit) {
-  if (commit == null || commit.length < 8) return commit ?? '-';
+  if (commit == null || commit.length < 8) return commit ?? dash;
   return commit.substring(0, 8);
 }
 
-const _defaultRules = <String>[
+const _appRules = <String>[
   'Amounts are integer pesos as published. A dash means the document has no '
       'such line, never zero.',
-  'The NEP and the House bill are two versions of one budget: compared, never '
-      'added.',
-  '"In the House bill only" and "in the NEP only" are candidates: leads to '
-      'check, not confirmed insertions or deletions.',
+  'The NEP and the House bill are compared, never added: they are two versions '
+      'of one budget.',
+  'A line found in one version only is a candidate, never a confirmed '
+      'insertion or deletion.',
   'A DPWH office that serves several districts is shown whole; its money is '
       'never split between them.',
-  'Enacted amounts are appropriations: the authority to spend, not spending.',
-  'Nothing is hidden silently: exclusions carry reasons and are published.',
-  'Disclaimers are printed from the API response itself, so their wording '
-      'cannot drift.',
+  'Names are matched, not places surveyed: a line whose title never spells the '
+      'place out will not appear under a name search.',
+  'The enacted budgets have no region filter, so a region view says it is '
+      'showing national totals.',
 ];
-
-Future<void> _open(String url) async {
-  final uri = Uri.tryParse(url);
-  if (uri == null) return;
-  await launchUrl(uri, mode: LaunchMode.externalApplication);
-}

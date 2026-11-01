@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/links.dart';
 import '../../core/utils/format.dart';
 import '../../data/models/budget_models.dart';
 import '../../providers/budget_providers.dart';
@@ -27,7 +27,7 @@ class ProjectScreen extends ConsumerWidget {
           if (project != null)
             IconButton(
               tooltip: 'Open on budget.bettergov.ph',
-              onPressed: () => _open(project.row.url),
+              onPressed: () => openExternal(project.row.url),
               icon: const Icon(Icons.open_in_new),
             ),
         ],
@@ -50,6 +50,7 @@ class _Detail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final row = detail.row;
     final pages = <String, int?>{
       'NEP': row.nepPage,
@@ -79,19 +80,22 @@ class _Detail extends StatelessWidget {
             ),
             if (row.held) ...[
               const SizedBox(width: 8),
-              Text('unconfirmed match', style: AppTheme.meta(size: 11.5)),
+              Text(
+                'unconfirmed match',
+                style: AppTheme.meta(context, size: 11.5),
+              ),
             ],
           ],
         ),
         const SizedBox(height: 10),
         Text(
           row.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             height: 1.25,
             fontWeight: FontWeight.w700,
             letterSpacing: -0.3,
-            color: AppTheme.ink,
+            color: colors.ink,
           ),
         ),
         const SizedBox(height: 6),
@@ -103,18 +107,18 @@ class _Detail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Amount in each version',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.ink,
+                    color: colors.ink,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'A dash means the document has no such line, never zero.',
-                  style: AppTheme.meta(size: 11.5),
+                  style: AppTheme.meta(context, size: 11.5),
                 ),
                 const SizedBox(height: 6),
                 for (final entry in amounts.entries)
@@ -133,7 +137,7 @@ class _Detail extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Change, House bill vs NEP',
-                            style: AppTheme.meta(size: 12.5),
+                            style: AppTheme.meta(context, size: 12.5),
                           ),
                         ),
                         Text(
@@ -142,9 +146,9 @@ class _Detail extends StatelessWidget {
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                             color: row.deltaPhp! >= 0
-                                ? AppTheme.positive
-                                : AppTheme.negative,
-                            fontFeatures: AppTheme.amount.fontFeatures,
+                                ? colors.positive
+                                : colors.negative,
+                            fontFeatures: AppTheme.amountFeatures,
                           ),
                         ),
                       ],
@@ -162,12 +166,12 @@ class _Detail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'How the versions were matched',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.ink,
+                    color: colors.ink,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -203,7 +207,7 @@ class _Detail extends StatelessWidget {
                   'Pairings are candidates: leads for checking, not confirmed '
                   'insertions or deletions. The amount is the one the documents '
                   'publish, on the page beside it.',
-                  style: AppTheme.meta(size: 11.5),
+                  style: AppTheme.meta(context, size: 11.5),
                 ),
               ],
             ),
@@ -216,12 +220,12 @@ class _Detail extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Provenance',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.ink,
+                    color: colors.ink,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -233,7 +237,7 @@ class _Detail extends StatelessWidget {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () => _open(row.url),
+                        onPressed: () => openExternal(row.url),
                         icon: const Icon(Icons.open_in_new, size: 16),
                         label: const Text('View on budget.bettergov.ph'),
                       ),
@@ -246,7 +250,8 @@ class _Detail extends StatelessWidget {
                     children: [
                       Expanded(
                         child: FilledButton.icon(
-                          onPressed: () => _open(row.pdfUrl.values.first),
+                          onPressed: () =>
+                              openExternal(row.pdfUrl.values.first),
                           icon: const Icon(
                             Icons.picture_as_pdf_outlined,
                             size: 18,
@@ -289,13 +294,14 @@ class _AmountRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
           Expanded(
             flex: 3,
-            child: Text(label, style: AppTheme.meta(size: 12.5)),
+            child: Text(label, style: AppTheme.meta(context, size: 12.5)),
           ),
           Expanded(
             flex: 3,
@@ -305,8 +311,8 @@ class _AmountRow extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: amount == null ? AppTheme.inkMute : AppTheme.ink,
-                fontFeatures: AppTheme.amount.fontFeatures,
+                color: amount == null ? colors.inkMute : colors.ink,
+                fontFeatures: AppTheme.amountFeatures,
               ),
             ),
           ),
@@ -317,10 +323,10 @@ class _AmountRow extends StatelessWidget {
                 ? Text(
                     page == null ? dash : 'Page $page',
                     textAlign: TextAlign.right,
-                    style: AppTheme.meta(size: 11.5),
+                    style: AppTheme.meta(context, size: 11.5),
                   )
                 : TextButton(
-                    onPressed: () => _open(pdfUrl),
+                    onPressed: () => openExternal(pdfUrl),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       minimumSize: const Size(0, 32),
@@ -345,6 +351,7 @@ class _LabelRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     if (value == null || value!.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -353,14 +360,14 @@ class _LabelRow extends StatelessWidget {
         children: [
           SizedBox(
             width: 92,
-            child: Text(label, style: AppTheme.meta(size: 12)),
+            child: Text(label, style: AppTheme.meta(context, size: 12)),
           ),
           Expanded(
             child: Text(
               value!,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12.5,
-                color: AppTheme.ink2,
+                color: colors.ink2,
                 height: 1.35,
               ),
             ),
@@ -369,11 +376,4 @@ class _LabelRow extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> _open(String? url) async {
-  if (url == null || url.isEmpty) return;
-  final uri = Uri.tryParse(url);
-  if (uri == null) return;
-  await launchUrl(uri, mode: LaunchMode.externalApplication);
 }

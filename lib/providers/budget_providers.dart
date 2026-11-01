@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+import '../core/config/app_config.dart';
 import '../core/network/api_client.dart';
 import '../data/models/budget_models.dart';
 import '../data/models/place.dart';
@@ -25,37 +23,10 @@ final gaaServiceProvider = Provider<GaaService>(
 );
 
 class PlaceController extends Notifier<PlaceSelection> {
-  static const _storage = 'place.selection';
-
-  var _touched = false;
-
   @override
-  PlaceSelection build() {
-    _restore();
-    return const NationalPlace();
-  }
+  PlaceSelection build() => const NationalPlace();
 
-  Future<void> _restore() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (_touched) return;
-    final raw = prefs.getString(_storage);
-    if (raw == null || raw.isEmpty) return;
-    try {
-      final decoded = jsonDecode(raw);
-      if (decoded is Map) {
-        state = PlaceSelection.fromJson(decoded.cast<String, dynamic>());
-      }
-    } catch (_) {
-      return;
-    }
-  }
-
-  Future<void> select(PlaceSelection place) async {
-    _touched = true;
-    state = place;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_storage, jsonEncode(place.toJson()));
-  }
+  void select(PlaceSelection place) => state = place;
 }
 
 final placeProvider = NotifierProvider<PlaceController, PlaceSelection>(
@@ -65,6 +36,33 @@ final placeProvider = NotifierProvider<PlaceController, PlaceSelection>(
 final districtsProvider = FutureProvider.family<DistrictPage, String>(
   (ref, q) async => (await ref.watch(budgetApiProvider).districts(q: q)).data,
 );
+
+class NameMatches {
+  const NameMatches({required this.byDataset, required this.lines});
+
+  final Map<String, int> byDataset;
+  final int lines;
+
+  int get programs => byDataset.values.where((count) => count > 0).length;
+}
+
+final nameMatchesProvider = FutureProvider.family<NameMatches, String>((
+  ref,
+  q,
+) async {
+  final api = ref.watch(budgetApiProvider);
+  final counts = await Future.wait(
+    AppConfig.datasets.map((dataset) => api.projectMatchCount(dataset, q)),
+  );
+  final byDataset = <String, int>{
+    for (var i = 0; i < AppConfig.datasets.length; i++)
+      AppConfig.datasets[i]: counts[i],
+  };
+  return NameMatches(
+    byDataset: byDataset,
+    lines: byDataset.values.fold(0, (sum, count) => sum + count),
+  );
+});
 
 final regionsProvider = FutureProvider<RegionsPage>(
   (ref) async => (await ref.watch(budgetApiProvider).regions()).data,

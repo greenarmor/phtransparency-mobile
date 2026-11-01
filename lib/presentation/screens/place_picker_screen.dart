@@ -11,7 +11,8 @@ import '../../data/models/place.dart';
 import '../../providers/budget_providers.dart';
 import '../widgets/async_view.dart';
 import '../widgets/common.dart';
-import '../widgets/place_scope_bar.dart';
+import '../widgets/district_tile.dart';
+import '../widgets/section_label.dart';
 
 class PlacePickerScreen extends ConsumerStatefulWidget {
   const PlacePickerScreen({super.key});
@@ -39,10 +40,18 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
     });
   }
 
-  Future<void> _select(PlaceSelection place) async {
-    await ref.read(placeProvider.notifier).select(place);
+  void _select(PlaceSelection place) {
+    ref.read(placeProvider.notifier).select(place);
     if (!mounted) return;
-    context.pop();
+    switch (place) {
+      case NationalPlace():
+        context.go('/');
+      case RegionPlace():
+        context.go('/region/${place.key}');
+      case DistrictPlace():
+      case NamedPlace():
+        context.pop();
+    }
   }
 
   @override
@@ -51,6 +60,9 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
     final districts = ref.watch(districtsProvider(_q));
     final regions = ref.watch(regionsProvider);
     final named = _q.trim();
+    final matches = named.isEmpty
+        ? null
+        : ref.watch(nameMatchesProvider(named));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Choose a place')),
@@ -86,12 +98,21 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
           if (named.isNotEmpty) ...[
             const SizedBox(height: 8),
             _ChoiceTile(
-              icon: Icons.manage_search,
-              title: 'Search the budget for "$named"',
-              subtitle:
-                  'Every line whose name says it: four 2027 programs and the enacted budgets',
+              icon: Icons.location_city,
+              title: 'Town or city named "$named"',
+              subtitle: matches!.when(
+                data: (data) => data.lines == 0
+                    ? 'No 2027 line names it. Open the search anyway to check the enacted budgets.'
+                    : '${plural(data.lines, '2027 line')} name it in '
+                          '${plural(data.programs, 'program')}. Every line whose '
+                          'title says it, plus the enacted budgets.',
+                loading: () => 'Searching every 2027 line for the name…',
+                error: (_, _) =>
+                    'Every line whose title says it, plus the enacted budgets',
+              ),
               selected: current is NamedPlace && current.q == named,
-              onTap: () => _select(NamedPlace(q: named, label: named)),
+              onTap: () =>
+                  _select(NamedPlace(q: named, label: titleCasePlace(named))),
             ),
           ],
           const SectionLabel('Regions'),
@@ -136,7 +157,7 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
                   title: 'No district matches',
                   body: named.isEmpty
                       ? 'The district list could not be read.'
-                      : 'Try the province name, or use "Search the budget for $named".',
+                      : 'A city or municipality can still appear through the names of its lines - try "Town or city named $named" above.',
                 );
               }
               return Column(
@@ -144,7 +165,7 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
                   for (final district in page.districts)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
-                      child: _DistrictTile(
+                      child: DistrictTile(
                         district: district,
                         selected:
                             current is DistrictPlace &&
@@ -165,7 +186,7 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
                       child: Text(
                         'Showing ${page.districts.length} of ${page.total} districts. '
                         'Type a province, city or district to narrow the list.',
-                        style: AppTheme.meta(size: 11.5),
+                        style: AppTheme.meta(context, size: 11.5),
                       ),
                     ),
                 ],
@@ -205,10 +226,11 @@ class _ChoiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: selected ? AppTheme.accent : AppTheme.ruleSoft),
+        side: BorderSide(color: selected ? colors.accent : colors.ruleSoft),
       ),
       child: InkWell(
         onTap: onTap,
@@ -217,7 +239,7 @@ class _ChoiceTile extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: AppTheme.accent),
+              Icon(icon, size: 20, color: colors.accent),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -225,125 +247,19 @@ class _ChoiceTile extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        color: AppTheme.ink,
+                        color: colors.ink,
                       ),
                     ),
                     const SizedBox(height: 2),
-                    Text(subtitle, style: AppTheme.meta(size: 11.5)),
+                    Text(subtitle, style: AppTheme.meta(context, size: 11.5)),
                   ],
                 ),
               ),
               if (selected)
-                const Icon(
-                  Icons.check_circle,
-                  size: 20,
-                  color: AppTheme.accent,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DistrictTile extends StatelessWidget {
-  const _DistrictTile({
-    required this.district,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final DistrictSummary district;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final offices = district.offices.map((office) => office.name).join(', ');
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: selected ? AppTheme.accent : AppTheme.ruleSoft),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 12, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      district.label,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTheme.cardTitle(size: 14),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  if (selected)
-                    const Icon(
-                      Icons.check_circle,
-                      size: 18,
-                      color: AppTheme.accent,
-                    ),
-                ],
-              ),
-              const SizedBox(height: 3),
-              Text(
-                [
-                  district.jurisdiction,
-                  district.region ?? '',
-                  'Tier ${district.attributionCode}',
-                ].where((part) => part.isNotEmpty).join(' · '),
-                style: AppTheme.meta(size: 11.5),
-              ),
-              if (district.representativeName != null) ...[
-                const SizedBox(height: 2),
-                Text(
-                  'Rep. ${district.representativeName}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.meta(size: 11),
-                ),
-              ],
-              if (offices.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(
-                  offices,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTheme.meta(size: 11),
-                ),
-              ],
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Text('House 2027', style: AppTheme.meta(size: 10.5)),
-                  const SizedBox(width: 6),
-                  Text(
-                    compactPeso(district.house2027),
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: AppTheme.ink,
-                      fontFeatures: [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    'NEP ${compactPeso(district.nep2027)}',
-                    style: AppTheme.meta(size: 11),
-                  ),
-                ],
-              ),
+                Icon(Icons.check_circle, size: 20, color: colors.accent),
             ],
           ),
         ),

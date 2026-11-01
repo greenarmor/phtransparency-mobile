@@ -19,20 +19,20 @@ class StatusPill extends StatelessWidget {
   final bool held;
   final bool compact;
 
-  static Color colorFor(String group) {
+  static Color colorFor(String group, AppColors colors) {
     switch (group) {
       case 'house_only':
-        return AppTheme.accent;
+        return colors.accent;
       case 'nep_only':
-        return AppTheme.ink3;
+        return colors.ink3;
       case 'increased':
-        return AppTheme.positive;
+        return colors.positive;
       case 'decreased':
-        return AppTheme.neutral;
+        return colors.neutral;
       case 'scope_review':
         return const Color(0xFF6B5B95);
       default:
-        return AppTheme.inkMute;
+        return colors.inkMute;
     }
   }
 
@@ -55,7 +55,8 @@ class StatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = colorFor(group);
+    final colors = context.colors;
+    final color = colorFor(group, colors);
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: compact ? 7 : 9,
@@ -109,13 +110,14 @@ class AmountText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Text(
       compact ? compactPeso(amount) : fullPeso(amount),
       style: TextStyle(
         fontSize: size,
         fontWeight: FontWeight.w700,
-        color: color ?? AppTheme.ink,
-        fontFeatures: AppTheme.amount.fontFeatures,
+        color: color ?? colors.ink,
+        fontFeatures: AppTheme.amountFeatures,
         letterSpacing: -0.2,
       ),
     );
@@ -138,7 +140,7 @@ class MetaLine extends StatelessWidget {
       parts.join(' · '),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
-      style: AppTheme.meta(),
+      style: AppTheme.meta(context),
     );
   }
 }
@@ -151,6 +153,7 @@ class SectionHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 24, 4, 10),
       child: Row(
@@ -158,11 +161,11 @@ class SectionHeading extends StatelessWidget {
           Expanded(
             child: Text(
               title.toUpperCase(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.9,
-                color: AppTheme.ink3,
+                color: colors.ink3,
               ),
             ),
           ),
@@ -192,13 +195,14 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = tint ?? AppTheme.ink3;
+    final colors = context.colors;
+    final color = tint ?? colors.ink3;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppTheme.paper,
+        color: colors.paper,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.ruleSoft),
+        border: Border.all(color: colors.ruleSoft),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,15 +216,15 @@ class NoteCard extends StatelessWidget {
                 if (title.isNotEmpty) ...[
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: AppTheme.ink,
+                      color: colors.ink,
                     ),
                   ),
                   const SizedBox(height: 3),
                 ],
-                Text(body, style: AppTheme.meta(size: 12.5)),
+                Text(body, style: AppTheme.meta(context, size: 12.5)),
               ],
             ),
           ),
@@ -238,15 +242,20 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
       child: Column(
         children: [
-          const Icon(Icons.search_off, size: 36, color: AppTheme.inkMute),
+          Icon(Icons.search_off, size: 36, color: colors.inkMute),
           const SizedBox(height: 10),
-          Text(title, style: AppTheme.cardTitle(size: 15)),
+          Text(title, style: AppTheme.cardTitle(context, size: 15)),
           const SizedBox(height: 4),
-          Text(body, textAlign: TextAlign.center, style: AppTheme.meta()),
+          Text(
+            body,
+            textAlign: TextAlign.center,
+            style: AppTheme.meta(context),
+          ),
         ],
       ),
     );

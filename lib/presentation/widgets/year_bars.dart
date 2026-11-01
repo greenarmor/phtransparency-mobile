@@ -10,15 +10,18 @@ class YearBars extends StatelessWidget {
     required this.years,
     this.selected,
     this.height = 30,
+    this.onDark = false,
   });
 
   final Map<int, int> amounts;
   final List<int> years;
   final int? selected;
   final double height;
+  final bool onDark;
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final max = amounts.values.fold<int>(0, (a, b) => b > a ? b : a);
     final barMax = (height - 19).clamp(3.0, height);
     return SizedBox(
@@ -42,8 +45,10 @@ class YearBars extends StatelessWidget {
                             ),
                       decoration: BoxDecoration(
                         color: year == selected
-                            ? AppTheme.accent
-                            : AppTheme.accent.withValues(alpha: 0.2),
+                            ? (onDark ? Colors.white : colors.accent)
+                            : (onDark
+                                  ? Colors.white.withValues(alpha: 0.35)
+                                  : colors.accent.withValues(alpha: 0.2)),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
@@ -56,8 +61,10 @@ class YearBars extends StatelessWidget {
                             ? FontWeight.w700
                             : FontWeight.w500,
                         color: year == selected
-                            ? AppTheme.accent
-                            : AppTheme.inkMute,
+                            ? (onDark ? Colors.white : colors.accent)
+                            : (onDark
+                                  ? Colors.white.withValues(alpha: 0.7)
+                                  : colors.inkMute),
                       ),
                     ),
                   ],

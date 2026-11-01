@@ -30,6 +30,16 @@ String signedCompactPeso(int? amount) {
 String plural(int count, String one, [String? many]) =>
     '$count ${count == 1 ? one : (many ?? '${one}s')}';
 
+String titleCasePlace(String value) => value
+    .split(RegExp(r'\s+'))
+    .where((word) => word.isNotEmpty)
+    .map(
+      (word) => word.length == 1
+          ? word.toUpperCase()
+          : '${word[0].toUpperCase()}${word.substring(1)}',
+    )
+    .join(' ');
+
 String shortDate(String? iso) {
   if (iso == null) return dash;
   final parsed = DateTime.tryParse(iso);

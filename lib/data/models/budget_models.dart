@@ -83,6 +83,8 @@ class ProjectRow {
     required this.pdfUrl,
     required this.flags,
     required this.url,
+    this.lat,
+    this.lon,
   });
 
   final String id;
@@ -109,8 +111,18 @@ class ProjectRow {
   final Map<String, String> pdfUrl;
   final List<String> flags;
   final String url;
+  final double? lat;
+  final double? lon;
 
   String get key => '$dataset:$id';
+
+  bool get hasCoordinates =>
+      lat != null &&
+      lon != null &&
+      lat!.isFinite &&
+      lon!.isFinite &&
+      lat!.abs() <= 90 &&
+      lon!.abs() <= 180;
 
   factory ProjectRow.fromJson(Map<String, dynamic> json) => ProjectRow(
     id: json['id'] as String? ?? '',
@@ -137,6 +149,8 @@ class ProjectRow {
     pdfUrl: asStringMap(json['pdf_url']),
     flags: asStringList(json['flags']),
     url: json['url'] as String? ?? '',
+    lat: asDouble(json['lat']),
+    lon: asDouble(json['lon']),
   );
 }
 

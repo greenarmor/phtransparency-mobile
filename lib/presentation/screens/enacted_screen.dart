@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/config/app_config.dart';
 import '../../core/theme/app_theme.dart';
@@ -10,7 +9,7 @@ import '../../data/services/gaa_service.dart';
 import '../../providers/budget_providers.dart';
 import '../widgets/async_view.dart';
 import '../widgets/common.dart';
-import '../widgets/place_scope_bar.dart';
+import '../widgets/hero_card.dart';
 import '../widgets/year_bars.dart';
 
 class EnactedScreen extends ConsumerStatefulWidget {
@@ -35,41 +34,18 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
     final gaa = ref.watch(gaaProvider);
     final place = ref.watch(placeProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('Enacted budgets'),
-            Text(
-              '2020–2026 · ${place.title}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTheme.meta(size: 11.5),
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'Choose a place',
-            onPressed: () => context.push('/place'),
-            icon: const Icon(Icons.place_outlined),
-          ),
-        ],
-      ),
-      body: AsyncView<GaaDataset>(
-        value: gaa,
-        loadingLabel: place is NationalPlace || place is RegionPlace
-            ? 'Reading the national enacted budgets…'
-            : 'Searching 38 departments for ${place.title}…',
-        onRetry: () => ref.invalidate(gaaProvider),
-        builder: (context, data) => _body(place, data),
-      ),
+    return AsyncView<GaaDataset>(
+      value: gaa,
+      loadingLabel: place is NationalPlace || place is RegionPlace
+          ? 'Reading the national enacted budgets…'
+          : 'Searching 38 departments for ${place.title}…',
+      onRetry: () => ref.invalidate(gaaProvider),
+      builder: (context, data) => _body(context, place, data),
     );
   }
 
-  Widget _body(PlaceSelection place, GaaDataset data) {
+  Widget _body(BuildContext context, PlaceSelection place, GaaDataset data) {
+    final colors = context.colors;
     final rows = data.fundedIn(_year, query: _search.text);
     final total = data.totalFor(_year);
 
@@ -84,17 +60,28 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             sliver: SliverList.list(
               children: [
-                PlaceScopeBar(
-                  place: place,
-                  onTap: () => context.push('/place'),
+                Text(
+                  'Enacted budgets',
+                  style: TextStyle(
+                    fontSize: 22,
+                    height: 1.2,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.4,
+                    color: colors.ink,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '2020–2026 · appropriations',
+                  style: AppTheme.meta(context, size: 12.5),
                 ),
                 const SizedBox(height: 12),
                 if (data.regionFallback) ...[
-                  const NoteCard(
+                  NoteCard(
                     title: 'The GAA has no region filter',
                     body:
                         'The enacted budgets are not published by region, so the national totals are shown. Pick a district or a place to narrow them by name.',
-                    tint: AppTheme.neutral,
+                    tint: colors.neutral,
                   ),
                   const SizedBox(height: 12),
                 ],
@@ -106,22 +93,10 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                   totals: data.totals,
                 ),
                 const SizedBox(height: 12),
-                SizedBox(
-                  height: 34,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: AppConfig.gaaYears.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 6),
-                    itemBuilder: (context, index) {
-                      final year = AppConfig.gaaYears[index];
-                      return ChoiceChip(
-                        label: Text('$year'),
-                        selected: year == _year,
-                        showCheckmark: false,
-                        onSelected: (_) => setState(() => _year = year),
-                      );
-                    },
-                  ),
+                YearStrip(
+                  totals: data.totals,
+                  selected: _year,
+                  onSelected: (year) => setState(() => _year = year),
                 ),
                 const SizedBox(height: 12),
                 TextField(
@@ -149,12 +124,12 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                         data.national
                             ? '${rows.length} departments with money in $_year'
                             : '${rows.length} programs funded in $_year',
-                        style: AppTheme.meta(size: 12.5),
+                        style: AppTheme.meta(context, size: 12.5),
                       ),
                     ),
                     Text(
                       data.national ? 'National totals' : 'Named "${data.q}"',
-                      style: AppTheme.meta(size: 11.5),
+                      style: AppTheme.meta(context, size: 11.5),
                     ),
                   ],
                 ),
@@ -198,14 +173,14 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                       ? '${data.rows.length} departments · national totals, all years.'
                       : '${data.rows.length} program families across '
                             '${data.departmentsSearched} departments · matched by name.',
-                  style: AppTheme.meta(size: 11.5),
+                  style: AppTheme.meta(context, size: 11.5),
                 ),
                 if (data.truncated) ...[
                   const SizedBox(height: 6),
                   Text(
                     'The list was cut at 6,000 families for one department. '
                     'Make the place name more specific.',
-                    style: AppTheme.meta(size: 11.5),
+                    style: AppTheme.meta(context, size: 11.5),
                   ),
                 ],
               ],
@@ -234,24 +209,11 @@ class _YearHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: AppTheme.ink,
-        borderRadius: BorderRadius.circular(20),
-      ),
+    return HeroCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'ENACTED IN $year',
-            style: TextStyle(
-              fontSize: 10.5,
-              letterSpacing: 0.9,
-              fontWeight: FontWeight.w700,
-              color: Colors.white.withValues(alpha: 0.6),
-            ),
-          ),
+          HeroEyebrow('ENACTED IN $year'),
           const SizedBox(height: 8),
           Text(
             compactPeso(total),
@@ -269,7 +231,7 @@ class _YearHeader extends StatelessWidget {
             plural(rows, 'program funded', 'programs funded'),
             style: TextStyle(
               fontSize: 12,
-              color: Colors.white.withValues(alpha: 0.55),
+              color: Colors.white.withValues(alpha: 0.82),
             ),
           ),
           const SizedBox(height: 16),
@@ -281,6 +243,7 @@ class _YearHeader extends StatelessWidget {
               years: years,
               selected: year,
               height: 58,
+              onDark: true,
             ),
           ),
         ],
@@ -308,7 +271,7 @@ class _GaaCard extends StatelessWidget {
               program.name,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTheme.cardTitle(size: 14.5),
+              style: AppTheme.cardTitle(context, size: 14.5),
             ),
             if (row.department.isNotEmpty) ...[
               const SizedBox(height: 3),
@@ -316,7 +279,7 @@ class _GaaCard extends StatelessWidget {
                 row.department,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.meta(size: 11.5),
+                style: AppTheme.meta(context, size: 11.5),
               ),
             ],
             const SizedBox(height: 10),
@@ -326,12 +289,15 @@ class _GaaCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 1),
-                  child: Text('in $year', style: AppTheme.meta(size: 11)),
+                  child: Text(
+                    'in $year',
+                    style: AppTheme.meta(context, size: 11),
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   '${program.idsCount} line${program.idsCount == 1 ? '' : 's'}',
-                  style: AppTheme.meta(size: 11),
+                  style: AppTheme.meta(context, size: 11),
                 ),
               ],
             ),

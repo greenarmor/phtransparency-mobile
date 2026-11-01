@@ -13,6 +13,7 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final row = item.project;
     final amount = row.housePhp ?? row.nepPhp;
     final hasBoth = row.nepPhp != null && row.housePhp != null;
@@ -30,7 +31,7 @@ class ProjectCard extends StatelessWidget {
                 row.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: AppTheme.cardTitle(),
+                style: AppTheme.cardTitle(context),
               ),
               const SizedBox(height: 4),
               MetaLine(children: [row.office, row.program]),
@@ -44,7 +45,7 @@ class ProjectCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 1),
                     child: Text(
                       row.housePhp != null ? 'House' : 'NEP',
-                      style: AppTheme.meta(size: 11.5),
+                      style: AppTheme.meta(context, size: 11.5),
                     ),
                   ),
                   const Spacer(),
@@ -62,7 +63,7 @@ class ProjectCard extends StatelessWidget {
                   children: [
                     Text(
                       'NEP ${compactPeso(row.nepPhp)}',
-                      style: AppTheme.meta(size: 11.5),
+                      style: AppTheme.meta(context, size: 11.5),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -71,9 +72,9 @@ class ProjectCard extends StatelessWidget {
                         fontSize: 11.5,
                         fontWeight: FontWeight.w600,
                         color: row.deltaPhp! >= 0
-                            ? AppTheme.positive
-                            : AppTheme.negative,
-                        fontFeatures: AppTheme.amount.fontFeatures,
+                            ? colors.positive
+                            : colors.negative,
+                        fontFeatures: AppTheme.amountFeatures,
                       ),
                     ),
                   ],

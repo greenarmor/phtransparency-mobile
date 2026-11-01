@@ -4,39 +4,53 @@ import 'package:go_router/go_router.dart';
 
 import '../presentation/screens/about_screen.dart';
 import '../presentation/screens/enacted_screen.dart';
-import '../presentation/screens/home_screen.dart';
+import '../presentation/screens/map_screen.dart';
+import '../presentation/screens/national_screen.dart';
 import '../presentation/screens/place_picker_screen.dart';
 import '../presentation/screens/project_screen.dart';
-import '../presentation/shell/app_shell.dart';
+import '../presentation/screens/region_screen.dart';
+import '../presentation/screens/welcome_screen.dart';
+import '../presentation/shell/region_shell.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/welcome',
+    redirect: (context, state) {
+      final path = state.uri.path;
+      if (path == '/enacted') return '/';
+      if (path.endsWith('/about') && path != '/about') return '/about';
+      return null;
+    },
     routes: [
-      ShellRoute(
-        builder: (context, state, child) =>
-            AppShell(location: state.uri.path, child: child),
-        routes: [
-          GoRoute(
-            path: '/',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: HomeScreen()),
-          ),
-          GoRoute(
-            path: '/enacted',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: EnactedScreen()),
-          ),
-          GoRoute(
-            path: '/about',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: AboutScreen()),
-          ),
-        ],
+      GoRoute(
+        path: '/welcome',
+        builder: (context, state) => const WelcomeScreen(),
       ),
+      GoRoute(path: '/', builder: (context, state) => const NationalScreen()),
+      GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
+      GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
       GoRoute(
         path: '/place',
         builder: (context, state) => const PlacePickerScreen(),
+      ),
+      ShellRoute(
+        builder: (context, state, child) => RegionShell(
+          regionKey: state.pathParameters['key'] ?? '',
+          location: state.uri.path,
+          child: child,
+        ),
+        routes: [
+          GoRoute(
+            path: '/region/:key',
+            builder: (context, state) => const RegionMoneyScreen(),
+            routes: [
+              GoRoute(
+                path: 'enacted',
+                builder: (context, state) => const EnactedScreen(),
+              ),
+            ],
+          ),
+        ],
       ),
       GoRoute(
         path: '/project/:dataset/:id',
@@ -58,7 +72,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () => context.go('/'),
-                child: const Text('See every project'),
+                child: const Text('Back to the Philippines'),
               ),
             ],
           ),

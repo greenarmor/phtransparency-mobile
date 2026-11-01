@@ -78,4 +78,10 @@ void main() {
       expect(summary.unconfirmed, 1);
     });
   });
+
+  test('titleCasePlace capitalises a typed place name', () {
+    expect(titleCasePlace('carmen'), 'Carmen');
+    expect(titleCasePlace('  cebu   city '), 'Cebu City');
+    expect(titleCasePlace('sta. cruz'), 'Sta. Cruz');
+  });
 }

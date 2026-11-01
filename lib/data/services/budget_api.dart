@@ -120,6 +120,15 @@ class BudgetApi {
     );
   }
 
+  Future<int> projectMatchCount(String dataset, String q) async {
+    final json = await _client.getJson(
+      '$_root/datasets/$dataset/projects',
+      query: {'q': q, 'limit': 1},
+    );
+    final data = json['data'];
+    return data is Map ? asInt(data['total']) ?? 0 : 0;
+  }
+
   Future<Envelope<DistrictPage>> districts({
     String? q,
     int limit = 30,

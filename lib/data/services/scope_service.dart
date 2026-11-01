@@ -106,6 +106,28 @@ class ScopeResult {
   final String? note;
 }
 
+int scopedAmount(ScopedProject item) =>
+    item.project.housePhp ?? item.project.nepPhp ?? 0;
+
+List<ScopedProject> mappableProjects(
+  Iterable<ScopedProject> projects, {
+  String? group,
+  String query = '',
+}) {
+  final needle = query.trim().toLowerCase();
+  final points = projects.where((item) {
+    final row = item.project;
+    if (!row.hasCoordinates) return false;
+    if (group != null && row.bridgeGroup != group) return false;
+    if (needle.isEmpty) return true;
+    return '${row.title} ${row.office ?? ''} ${row.program ?? ''} ${row.pap ?? ''}'
+        .toLowerCase()
+        .contains(needle);
+  }).toList();
+  points.sort((a, b) => scopedAmount(b).compareTo(scopedAmount(a)));
+  return points;
+}
+
 class _Job {
   const _Job({
     required this.kind,
