@@ -6,6 +6,24 @@ legislative districts. Each view answers what the place gets in FY 2027 under th
 under the House bill, with the page each figure is on, and what has been enacted for it
 since 2020.
 
+## Download
+
+Anyone can install the app from the signed release APK committed to this repo:
+
+- **[bettergov-budget-v1.0.0.apk](releases/bettergov-budget-v1.0.0.apk)** (56.9 MB)
+
+Verify the download against the published SHA-256 before installing:
+
+```sh
+shasum -a 256 bettergov-budget-v1.0.0.apk
+# 6a728a1828e85e6e1dea2aef894854e4b522f84043ef6c429999f3a8333f28d9
+```
+
+The checksum is also stored next to the APK as
+[`bettergov-budget-v1.0.0.apk.sha256`](releases/bettergov-budget-v1.0.0.apk.sha256).
+The APK is signed (`CN=BetterGov Budget`); Android will ask you to allow
+installs from this source on first run.
+
 ## Coverage
 
 - **All Philippines** - national totals for the four project programs, the six status
