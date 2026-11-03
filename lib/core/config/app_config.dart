@@ -12,6 +12,10 @@ class AppConfig {
   static const sourceUrl = 'https://budget.bettergov.ph/hgab/2027/overview';
   static const docsUrl = 'https://budget.bettergov.ph/docs';
   static const sourceRepo = 'github.com/csiiiv/DPWH-NEP-HB-2027-ANALYSIS';
+  static const changesCsvUrl =
+      'https://budget-assets.bettergov.ph/hgab/2027/changes-list.csv';
+  static const campaignFistUrl =
+      'https://budget.bettergov.ph/campaign/fist.webp';
 
   static const datasets = <String>['dpwh', 'fmr', 'hfep', 'nia'];
 

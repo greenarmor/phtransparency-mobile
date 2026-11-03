@@ -1,3 +1,5 @@
+import 'package:bettergov_budget/core/theme/app_theme.dart';
+import 'package:bettergov_budget/presentation/widgets/common.dart';
 import 'package:bettergov_budget/presentation/widgets/status_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +27,16 @@ Widget _app(Widget child, {double textScale = 1}) => MaterialApp(
 );
 
 void main() {
+  test('changed groups are red and same is green', () {
+    const colors = AppColors.light;
+    expect(StatusPill.colorFor('house_only', colors), colors.accent);
+    expect(StatusPill.colorFor('increased', colors), colors.accent);
+    expect(StatusPill.colorFor('decreased', colors), colors.accent);
+    expect(StatusPill.colorFor('nep_only', colors), colors.accent);
+    expect(StatusPill.colorFor('scope_review', colors), colors.accent);
+    expect(StatusPill.colorFor('unchanged', colors), colors.positive);
+  });
+
   testWidgets('every tile paints at large text without overflowing', (
     tester,
   ) async {

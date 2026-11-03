@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/app_config.dart';
-import '../../core/theme/app_theme.dart';
 import '../../providers/theme_providers.dart';
 import '../widgets/app_logo.dart';
+
+class _SplashPalette {
+  static const cream = Color(0xFFF3EFE4);
+  static const ink = Color(0xFF17171B);
+  static const inkSoft = Color(0xFF3C3C42);
+  static const red = Color(0xFFC8262C);
+  static const navy = Color(0xFF1B2A4A);
+}
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -47,59 +55,35 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return Scaffold(
-      backgroundColor: colors.paper,
-      body: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [colors.paper, colors.paper2],
-          ),
-        ),
-        child: SafeArea(
-          child: Stack(
-            children: [
-              Positioned(
-                top: -140,
-                right: -110,
-                child: _Glow(size: 340, opacity: 0.9),
+      backgroundColor: _SplashPalette.cream,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(22, 16, 22, 24),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: constraints.maxHeight - 40,
               ),
-              Positioned(
-                bottom: -160,
-                left: -110,
-                child: _Glow(size: 300, opacity: 0.55),
-              ),
-              LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - 52,
-                    ),
-                    child: TweenAnimationBuilder<double>(
-                      tween: Tween(begin: 0, end: 1),
-                      duration: Duration(milliseconds: reduceMotion ? 0 : 480),
-                      curve: Curves.easeOutCubic,
-                      builder: (context, value, child) => Opacity(
-                        opacity: value,
-                        child: Transform.translate(
-                          offset: Offset(0, 14 * (1 - value)),
-                          child: child,
-                        ),
-                      ),
-                      child: _WelcomeBody(
-                        countdown: _countdown,
-                        onContinue: _continue,
-                      ),
-                    ),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: 1),
+                duration: Duration(milliseconds: reduceMotion ? 0 : 480),
+                curve: Curves.easeOutCubic,
+                builder: (context, value, child) => Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset(0, 14 * (1 - value)),
+                    child: child,
                   ),
                 ),
+                child: _WelcomeBody(
+                  countdown: _countdown,
+                  onContinue: _continue,
+                ),
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -115,79 +99,30 @@ class _WelcomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Center(
-          child: AppLogo(
-            asset: 'assets/images/welcome_logo.png',
-            darkAsset: 'assets/images/welcome_logo_dark.png',
-            size: 165,
-          ),
-        ),
+        const _SplashEyebrow(),
+        const SizedBox(height: 14),
+        const _SplashHero(),
         const SizedBox(height: 22),
-        Center(
-          child: Text(
-            'BetterGovPH',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 30,
-              height: 1.15,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.6,
-              color: colors.ink,
-            ),
-          ),
-        ),
-        const SizedBox(height: 6),
-        Center(
-          child: Text(
-            'A community-run portal for the Philippines',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.35,
-              fontWeight: FontWeight.w500,
-              color: colors.ink3,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Center(
-          child: Text(
-            'FY ${AppConfig.fiscalYear} · NEP vs House bill',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.2,
-              color: colors.accent,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Welcome. See what every place in the Philippines gets: its FY 2027 '
-          'projects in the NEP and in the House bill side by side, the page '
-          'each figure sits on, and what has been enacted for it since 2020.',
-          style: TextStyle(fontSize: 14, height: 1.5, color: colors.ink2),
-        ),
-        const SizedBox(height: 20),
         const _ThemeChooser(),
-        const SizedBox(height: 28),
+        const SizedBox(height: 22),
         SizedBox(
           width: double.infinity,
           child: FilledButton(
             onPressed: onContinue,
             style: FilledButton.styleFrom(
+              backgroundColor: _SplashPalette.ink,
+              foregroundColor: _SplashPalette.cream,
               minimumSize: const Size(0, 50),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(3),
               ),
               textStyle: const TextStyle(
-                fontSize: 15,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
+                letterSpacing: 1.1,
               ),
             ),
             child: const Text('Continue to the budget'),
@@ -200,29 +135,218 @@ class _WelcomeBody extends StatelessWidget {
   }
 }
 
-class _Glow extends StatelessWidget {
-  const _Glow({required this.size, required this.opacity});
-
-  final double size;
-  final double opacity;
+class _SplashEyebrow extends StatelessWidget {
+  const _SplashEyebrow();
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: RadialGradient(
-          colors: [
-            colors.accentSoft.withValues(alpha: opacity),
-            colors.accentSoft.withValues(alpha: 0),
+    return const Row(
+      children: [
+        AppLogo(size: 26, asset: 'assets/images/welcome_logo.png'),
+        SizedBox(width: 9),
+        Text(
+          'BetterGov.Ph',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.2,
+            color: _SplashPalette.ink,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SplashHero extends StatelessWidget {
+  const _SplashHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Positioned(
+              top: -width * 0.06,
+              right: -width * 0.14,
+              child: SizedBox(
+                width: width * 0.88,
+                height: width * 1.12,
+                child: const _FistBackground(),
+              ),
+            ),
+            const Positioned.fill(child: _TitleScrim()),
+            Padding(
+              padding: const EdgeInsets.only(right: 20, top: 4, bottom: 2),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _SplashWord(
+                          'WE ARE',
+                          color: _SplashPalette.ink,
+                          size: 82,
+                        ),
+                        _SplashWord(
+                          'NOT',
+                          color: _SplashPalette.red,
+                          size: 118,
+                        ),
+                        _SplashWord(
+                          'IGNORANT',
+                          color: _SplashPalette.ink,
+                          size: 76,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  const Text(
+                    'Inserted and adjusted projects in the 2027 House budget bill. '
+                    'We read every single one.',
+                    style: TextStyle(
+                      fontSize: 15.5,
+                      height: 1.35,
+                      fontWeight: FontWeight.w600,
+                      color: _SplashPalette.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _TitleScrim extends StatelessWidget {
+  const _TitleScrim();
+
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+          colors: [
+            _SplashPalette.cream,
+            Color(0xE6F3EFE4),
+            Color(0x00F3EFE4),
+          ],
+          stops: [0.0, 0.38, 0.78],
         ),
       ),
     );
   }
+}
+
+class _SplashWord extends StatelessWidget {
+  const _SplashWord(this.text, {required this.color, required this.size});
+
+  final String text;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: GoogleFonts.anton(
+        color: color,
+        fontSize: size,
+        height: 0.94,
+        letterSpacing: 0.4,
+      ),
+    );
+  }
+}
+
+class _FistBackground extends StatelessWidget {
+  const _FistBackground();
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.asset(
+      'assets/images/campaign_fist.webp',
+      fit: BoxFit.contain,
+      alignment: Alignment.centerRight,
+      errorBuilder: (_, _, _) => Image.network(
+        AppConfig.campaignFistUrl,
+        fit: BoxFit.contain,
+        alignment: Alignment.centerRight,
+        gaplessPlayback: true,
+        errorBuilder: (_, _, _) => const _FistFallback(),
+      ),
+    );
+  }
+}
+
+class _FistFallback extends StatelessWidget {
+  const _FistFallback();
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(painter: _FistFallbackPainter());
+  }
+}
+
+class _FistFallbackPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final origin = Offset(size.width * 0.92, size.height * 0.08);
+    final rayPaint = Paint()
+      ..color = _SplashPalette.red
+      ..style = PaintingStyle.fill;
+
+    const firstAngle = 1.95;
+    const step = 0.16;
+    for (var i = 0; i < 7; i++) {
+      final start = firstAngle + i * step;
+      final path = Path()
+        ..moveTo(origin.dx, origin.dy)
+        ..arcTo(
+          Rect.fromCircle(center: origin, radius: size.width * 1.7),
+          start,
+          0.075,
+          false,
+        )
+        ..close();
+      canvas.drawPath(path, rayPaint);
+    }
+
+    final paperPaint = Paint()
+      ..color = _SplashPalette.navy
+      ..style = PaintingStyle.fill;
+    final bandPaint = Paint()
+      ..color = _SplashPalette.red
+      ..style = PaintingStyle.fill;
+
+    canvas.save();
+    canvas.translate(size.width * 0.52, size.height * 0.34);
+    for (final angle in [-0.42, -0.18, 0.06]) {
+      canvas.save();
+      canvas.rotate(angle);
+      canvas.drawRect(Rect.fromLTWH(-36, -48, 74, 100), paperPaint);
+      canvas.restore();
+    }
+    canvas.drawRect(Rect.fromLTWH(-40, 8, 84, 11), bandPaint);
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _FistFallbackPainter oldDelegate) => false;
 }
 
 class _Countdown extends StatelessWidget {
@@ -232,7 +356,6 @@ class _Countdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final seconds = _WelcomeScreenState.stay.inSeconds;
     return AnimatedBuilder(
       animation: countdown,
@@ -248,8 +371,8 @@ class _Countdown extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: 1 - countdown.value,
                 minHeight: 4,
-                backgroundColor: colors.accentSoft,
-                valueColor: AlwaysStoppedAnimation(colors.accent),
+                backgroundColor: const Color(0xFFF3D9D4),
+                valueColor: const AlwaysStoppedAnimation(_SplashPalette.red),
               ),
             ),
             const SizedBox(height: 10),
@@ -258,7 +381,7 @@ class _Countdown extends StatelessWidget {
                   ? 'Opening the budget…'
                   : 'Opening the budget automatically in $remaining s',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 12, color: colors.ink3),
+              style: const TextStyle(fontSize: 12, color: _SplashPalette.inkSoft),
             ),
           ],
         );
@@ -272,18 +395,17 @@ class _ThemeChooser extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colors = context.colors;
     final mode = ref.watch(themeModeProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Appearance',
           style: TextStyle(
             fontSize: 12.5,
             fontWeight: FontWeight.w700,
-            color: colors.ink,
+            color: _SplashPalette.ink,
           ),
         ),
         const SizedBox(height: 8),

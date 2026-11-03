@@ -23,7 +23,7 @@ class AppLogo extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0xFF0B4FD9), Color(0xFF3D72E9)],
+            colors: [Color(0xFF1B2A4A), Color(0xFFC8262C)],
           ),
         ),
         child: Center(

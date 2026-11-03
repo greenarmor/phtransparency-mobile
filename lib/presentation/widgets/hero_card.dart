@@ -46,7 +46,7 @@ class HeroCard extends StatelessWidget {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: [Color(0xFFEAF1FF), Color(0xFFBFD3FF)],
+                  colors: [Color(0xFFF0E6D6), Color(0xFFC9BBA0)],
                 ),
               ),
             ),
@@ -65,8 +65,8 @@ class HeroCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? const [Color(0xFF0A2A63), Color(0xFF123E86), Color(0xFF1B52A6)]
-              : const [Color(0xFF0B4FD9), Color(0xFF3D72E9), Color(0xFF6C97F2)],
+              ? const [Color(0xFF121820), Color(0xFF1B2A4A), Color(0xFF2A3A5C)]
+              : const [Color(0xFF1B2A4A), Color(0xFF2C4068), Color(0xFF3A5280)],
           stops: const [0, 0.55, 1],
         ),
         border: Border.all(
@@ -87,12 +87,12 @@ class HeroCard extends StatelessWidget {
               ]
             : [
                 BoxShadow(
-                  color: const Color(0xFF0B4FD9).withValues(alpha: 0.36),
+                  color: const Color(0xFF1B2A4A).withValues(alpha: 0.36),
                   blurRadius: 34,
                   offset: const Offset(0, 18),
                 ),
                 BoxShadow(
-                  color: const Color(0xFF0B4FD9).withValues(alpha: 0.18),
+                  color: const Color(0xFFC8262C).withValues(alpha: 0.18),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -179,8 +179,8 @@ class HeroCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      const Color(0xFF05183F).withValues(alpha: 0),
-                      const Color(0xFF05183F).withValues(alpha: 0.3),
+                      const Color(0xFF121820).withValues(alpha: 0),
+                      const Color(0xFF121820).withValues(alpha: 0.3),
                     ],
                   ),
                 ),

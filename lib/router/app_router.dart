@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../presentation/screens/about_screen.dart';
 import '../presentation/screens/enacted_screen.dart';
+import '../presentation/screens/inserted_screen.dart';
 import '../presentation/screens/map_screen.dart';
 import '../presentation/screens/national_screen.dart';
 import '../presentation/screens/place_picker_screen.dart';
@@ -18,6 +19,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final path = state.uri.path;
       if (path == '/enacted') return '/';
+      if (path == '/campaign') return '/';
       if (path.endsWith('/about') && path != '/about') return '/about';
       return null;
     },
@@ -27,6 +29,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const WelcomeScreen(),
       ),
       GoRoute(path: '/', builder: (context, state) => const NationalScreen()),
+      GoRoute(
+        path: '/inserted',
+        builder: (context, state) => const InsertedScreen(),
+      ),
       GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
       GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
       GoRoute(
