@@ -8,9 +8,10 @@ since 2020.
 
 ## Download
 
-Anyone can install the app from the signed release APK committed to this repo:
+Install the app from the signed release APK published on the
+[**Releases page**](https://github.com/greenarmor/phtransparency-mobile/releases):
 
-- **[bettergov-budget-v1.0.1.apk](releases/bettergov-budget-v1.0.1.apk)** (57.3 MB)
+- **[bettergov-budget-v1.0.1.apk](https://github.com/greenarmor/phtransparency-mobile/releases/download/v1.0.1/bettergov-budget-v1.0.1.apk)** (57.3 MB)
 
 Verify the download against the published SHA-256 before installing:
 
@@ -19,10 +20,12 @@ shasum -a 256 bettergov-budget-v1.0.1.apk
 # 1d4df989bacd80e536a555c37e315c8fd395625a2c6588711c16d68ed404094f
 ```
 
-The checksum is also stored next to the APK as
-[`bettergov-budget-v1.0.1.apk.sha256`](releases/bettergov-budget-v1.0.1.apk.sha256).
-The APK is signed (`CN=BetterGov Budget`); Android will ask you to allow
-installs from this source on first run.
+The same checksum is attached to the release as
+[`bettergov-budget-v1.0.1.apk.sha256`](https://github.com/greenarmor/phtransparency-mobile/releases/download/v1.0.1/bettergov-budget-v1.0.1.apk.sha256)
+and kept in this repo as [`releases/bettergov-budget-v1.0.1.apk.sha256`](releases/bettergov-budget-v1.0.1.apk.sha256).
+The APK is signed (`CN=BetterGov Budget`, APK Signature Scheme v2); Android will ask
+you to allow installs from this source on first run.
+
 
 ## What's new in 1.0.1
 

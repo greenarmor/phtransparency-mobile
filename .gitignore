@@ -57,3 +57,6 @@ android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 .firebaserc
 firebase.json
+
+# Release binaries are published as GitHub Releases assets, not committed
+releases/*.apk
