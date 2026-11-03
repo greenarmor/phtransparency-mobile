@@ -10,19 +10,30 @@ since 2020.
 
 Anyone can install the app from the signed release APK committed to this repo:
 
-- **[bettergov-budget-v1.0.0.apk](releases/bettergov-budget-v1.0.0.apk)** (56.9 MB)
+- **[bettergov-budget-v1.0.1.apk](releases/bettergov-budget-v1.0.1.apk)** (57.3 MB)
 
 Verify the download against the published SHA-256 before installing:
 
 ```sh
-shasum -a 256 bettergov-budget-v1.0.0.apk
-# 6a728a1828e85e6e1dea2aef894854e4b522f84043ef6c429999f3a8333f28d9
+shasum -a 256 bettergov-budget-v1.0.1.apk
+# 1d4df989bacd80e536a555c37e315c8fd395625a2c6588711c16d68ed404094f
 ```
 
 The checksum is also stored next to the APK as
-[`bettergov-budget-v1.0.0.apk.sha256`](releases/bettergov-budget-v1.0.0.apk.sha256).
+[`bettergov-budget-v1.0.1.apk.sha256`](releases/bettergov-budget-v1.0.1.apk.sha256).
 The APK is signed (`CN=BetterGov Budget`); Android will ask you to allow
 installs from this source on first run.
+
+## What's new in 1.0.1
+
+- **Campaign welcome** - the app opens on the *WE ARE NOT IGNORANT* poster, on the
+  cream, ink, red and navy palette, with the live inserted-and-adjusted count.
+- **Inserted projects** - a red app-bar action opens every House-bill-only line across
+  the four programs, with a search box, a lazy list, and a download of the published
+  changes CSV.
+- **Status colours** - any changed group reads red; only "same amount in both" is green.
+- The old campaign route and page are gone: the flow is welcome, then the budget.
+
 
 ## Coverage
 
