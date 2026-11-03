@@ -35,34 +35,34 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color neutral;
 
   static const light = AppColors(
-    paper: Color(0xFFFFFFFF),
-    paper2: Color(0xFFF4F7FC),
-    ink: Color(0xFF11151C),
-    ink2: Color(0xFF2B3340),
-    ink3: Color(0xFF5B6373),
-    inkMute: Color(0xFF8A92A1),
-    rule: Color(0xFFD4D8E0),
-    ruleSoft: Color(0xFFE7EAEF),
-    accent: Color(0xFF0B4FD9),
-    accentDeep: Color(0xFF0A44BD),
-    accentSoft: Color(0xFFE8EFFF),
+    paper: Color(0xFFF3EFE4),
+    paper2: Color(0xFFE8E2D2),
+    ink: Color(0xFF17171B),
+    ink2: Color(0xFF3C3C42),
+    ink3: Color(0xFF6A6A72),
+    inkMute: Color(0xFF8A8A90),
+    rule: Color(0xFFD4CFC3),
+    ruleSoft: Color(0xFFE4DFD2),
+    accent: Color(0xFFC8262C),
+    accentDeep: Color(0xFF9E1C21),
+    accentSoft: Color(0xFFF3D9D4),
     positive: Color(0xFF3A6B3A),
-    negative: Color(0xFFB8341F),
-    neutral: Color(0xFF8A7C5A),
+    negative: Color(0xFFC8262C),
+    neutral: Color(0xFF1B2A4A),
   );
 
   static const dark = AppColors(
-    paper: Color(0xFF141B26),
-    paper2: Color(0xFF0C1118),
-    ink: Color(0xFFEDF1F8),
-    ink2: Color(0xFFC6CEDA),
-    ink3: Color(0xFF9FABBC),
-    inkMute: Color(0xFF7E8A9B),
-    rule: Color(0xFF303A49),
-    ruleSoft: Color(0xFF242E3B),
-    accent: Color(0xFF7CA3FF),
-    accentDeep: Color(0xFF9DBAFF),
-    accentSoft: Color(0xFF1E2C48),
+    paper: Color(0xFF1B2A4A),
+    paper2: Color(0xFF121820),
+    ink: Color(0xFFF3EFE4),
+    ink2: Color(0xFFD8D3C6),
+    ink3: Color(0xFFA8A396),
+    inkMute: Color(0xFF7E7A70),
+    rule: Color(0xFF2E3A54),
+    ruleSoft: Color(0xFF243044),
+    accent: Color(0xFFE04A4E),
+    accentDeep: Color(0xFFF07074),
+    accentSoft: Color(0xFF3A1C22),
     positive: Color(0xFF8AD08A),
     negative: Color(0xFFF1988A),
     neutral: Color(0xFFD9C791),
@@ -147,13 +147,13 @@ class AppTheme {
   static ThemeData _theme(AppColors colors, Brightness brightness) {
     final scheme =
         ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0B4FD9),
+          seedColor: const Color(0xFFC8262C),
           brightness: brightness,
         ).copyWith(
           primary: colors.accent,
           onPrimary: brightness == Brightness.dark
-              ? const Color(0xFF07122B)
-              : Colors.white,
+              ? const Color(0xFF17171B)
+              : const Color(0xFFF3EFE4),
           secondary: colors.accentDeep,
           surface: colors.paper,
           onSurface: colors.ink,

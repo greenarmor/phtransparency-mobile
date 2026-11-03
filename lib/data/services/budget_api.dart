@@ -135,6 +135,37 @@ class BudgetApi {
         .toList();
   }
 
+  /// Every row in one bridge group for one dataset, paged through in full so
+  /// the campaign ledger can be searched and paged in place.
+  Future<List<ProjectRow>> groupAllRows(String dataset, String group) async {
+    final path = '$_root/datasets/$dataset/projects';
+    final firstJson = await _client.getJson(
+      path,
+      query: {'group': group, 'limit': pageSize, 'offset': 0},
+    );
+    final first = _page(firstJson);
+    final rows = <ProjectRow>[...first.rows];
+    final offsets = <int>[
+      for (var offset = pageSize; offset < first.total; offset += pageSize)
+        offset,
+    ];
+    for (var i = 0; i < offsets.length; i += 4) {
+      final batch = offsets.skip(i).take(4).toList();
+      final pages = await Future.wait(
+        batch.map(
+          (offset) => _client.getJson(
+            path,
+            query: {'group': group, 'limit': pageSize, 'offset': offset},
+          ),
+        ),
+      );
+      for (final page in pages) {
+        rows.addAll(_page(page).rows);
+      }
+    }
+    return rows;
+  }
+
   Future<Envelope<DistrictPage>> districts({
     String? q,
     int limit = 30,

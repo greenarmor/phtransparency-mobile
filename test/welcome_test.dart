@@ -39,9 +39,15 @@ void main() {
     await _phone(tester);
     await _open(tester);
 
-    expect(find.text('BetterGovPH'), findsOneWidget);
+    expect(find.text('BetterGov.Ph'), findsOneWidget);
+    expect(find.text('WE ARE'), findsOneWidget);
+    expect(find.text('NOT'), findsOneWidget);
+    expect(find.text('IGNORANT'), findsOneWidget);
     expect(
-      find.text('A community-run portal for the Philippines'),
+      find.text(
+        'Inserted and adjusted projects in the 2027 House budget bill. '
+        'We read every single one.',
+      ),
       findsOneWidget,
     );
     expect(find.text('Appearance'), findsOneWidget);

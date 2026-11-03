@@ -21,16 +21,14 @@ class StatusPill extends StatelessWidget {
 
   static Color colorFor(String group, AppColors colors) {
     switch (group) {
-      case 'house_only':
-        return colors.accent;
-      case 'nep_only':
-        return colors.ink3;
-      case 'increased':
+      case 'unchanged':
         return colors.positive;
+      case 'house_only':
+      case 'nep_only':
+      case 'increased':
       case 'decreased':
-        return colors.neutral;
       case 'scope_review':
-        return const Color(0xFF6B5B95);
+        return colors.accent;
       default:
         return colors.inkMute;
     }

@@ -9,6 +9,7 @@ import '../../core/utils/format.dart';
 import '../../data/models/budget_models.dart';
 import '../../data/models/place.dart';
 import '../../presentation/widgets/async_view.dart';
+import '../../presentation/widgets/campaign_banner.dart';
 import '../../presentation/widgets/circle_menu_button.dart';
 import '../../presentation/widgets/common.dart';
 import '../../presentation/widgets/hero_card.dart';
@@ -17,6 +18,7 @@ import '../../presentation/widgets/section_label.dart';
 import '../../presentation/widgets/status_grid.dart';
 import '../../presentation/widgets/version_figure.dart';
 import '../../providers/budget_providers.dart';
+import '../../providers/campaign_providers.dart';
 
 class NationalScreen extends ConsumerWidget {
   const NationalScreen({super.key});
@@ -51,6 +53,15 @@ class NationalScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
+            tooltip: 'Inserted projects',
+            color: context.colors.accent,
+            onPressed: () {
+              logTabOpen('inserted');
+              context.push('/inserted');
+            },
+            icon: const Icon(Icons.post_add),
+          ),
+          IconButton(
             tooltip: 'About this app',
             onPressed: () {
               logTabOpen('about');
@@ -71,6 +82,15 @@ class NationalScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 132),
               children: [
+                CampaignBanner(
+                  summary: switch (overview) {
+                    AsyncData(:final value) => CampaignSummary.of(
+                      value.datasets,
+                    ),
+                    _ => null,
+                  },
+                ),
+                const SizedBox(height: 18),
                 AsyncView<Overview>(
                   value: overview,
                   loadingLabel: 'Reading the national totals…',

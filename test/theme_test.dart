@@ -43,7 +43,7 @@ void main() {
     expect(light.brightness, Brightness.light);
     expect(dark.brightness, Brightness.dark);
 
-    expect(AppColors.light.paper, const Color(0xFFFFFFFF));
+    expect(AppColors.light.paper, const Color(0xFFF3EFE4));
     expect(AppColors.dark.paper, isNot(AppColors.light.paper));
     expect(AppColors.dark.ink, isNot(AppColors.light.ink));
   });
