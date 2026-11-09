@@ -50,10 +50,20 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('Appearance'), findsOneWidget);
-    expect(find.text('System'), findsOneWidget);
-    expect(find.text('Light'), findsOneWidget);
-    expect(find.text('Dark'), findsOneWidget);
+    expect(
+      find.text(
+        'DPWH, farm-to-market roads, health facilities and irrigation. '
+        'Inserted first, then increased, then decreased, largest first. '
+        'DEO: district engineering office, the DPWH unit that carries out '
+        'projects in its area. Its number is its own and need not match the '
+        'legislative district it serves.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('Appearance'), findsNothing);
+    expect(find.text('Light'), findsNothing);
+    expect(find.text('Dark'), findsNothing);
+    expect(find.byType(SegmentedButton<ThemeMode>), findsNothing);
     expect(find.text('Continue to the budget'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
   });
@@ -100,6 +110,32 @@ void main() {
 
     expect(find.text('budget home'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the fist sits inside the hero and leaves a clear margin', (
+    tester,
+  ) async {
+    await _phone(tester);
+    await _open(tester);
+
+    final hero = tester.getRect(
+      find
+          .ancestor(of: find.text('WE ARE'), matching: find.byType(Stack))
+          .first,
+    );
+    final fist = tester.getRect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.image is AssetImage &&
+            (widget.image as AssetImage).assetName.contains('campaign_fist'),
+      ),
+    );
+
+    expect(fist.left, greaterThan(hero.left));
+    expect(fist.top, greaterThan(hero.top));
+    expect(fist.right, lessThan(hero.right));
+    expect(fist.bottom, lessThan(hero.bottom));
   });
 
   testWidgets('the welcome screen survives a small screen and big text', (

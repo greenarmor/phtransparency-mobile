@@ -10,7 +10,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
 import 'firebase_options.dart';
-import 'providers/theme_providers.dart';
 import 'router/app_router.dart';
 
 Future<void> main() async {
@@ -55,10 +54,7 @@ class BetterGovBudgetApp extends ConsumerWidget {
       title: 'BetterGov Budget',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
-      darkTheme: AppTheme.dark(),
-      themeMode: ref.watch(themeModeProvider),
-      themeAnimationDuration: const Duration(milliseconds: 320),
-      themeAnimationCurve: Curves.easeOutCubic,
+      themeMode: ThemeMode.light,
       routerConfig: router,
     );
   }
