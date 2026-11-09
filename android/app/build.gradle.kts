@@ -10,11 +10,21 @@ if (keystorePropertiesFile.exists()) {
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
+    id("com.google.gms.google-services") apply false
+    id("com.google.firebase.crashlytics") apply false
     // END: FlutterFire Configuration
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Firebase is optional: each clone brings its own google-services.json (it is
+// gitignored). Without it the Google Services plugin would fail the build, so
+// both Firebase Gradle plugins are wired only when the file is present.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+} else {
+    logger.warn("google-services.json not found: building without Firebase.")
 }
 
 android {
@@ -54,6 +64,10 @@ android {
             signingConfig = if (keystorePropertiesFile.exists()) {
                 signingConfigs.getByName("release")
             } else {
+                logger.warn(
+                    "key.properties not found: this release build is signed " +
+                        "with the debug key. Do not publish it.",
+                )
                 signingConfigs.getByName("debug")
             }
         }

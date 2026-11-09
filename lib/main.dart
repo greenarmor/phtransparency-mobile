@@ -9,7 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/theme/app_theme.dart';
-import 'firebase_options.dart';
 import 'providers/theme_providers.dart';
 import 'router/app_router.dart';
 
@@ -23,11 +22,13 @@ Future<void> main() async {
   runApp(const ProviderScope(child: BetterGovBudgetApp()));
 }
 
+/// Firebase is optional. The options come from the platform config a clone
+/// brings itself (`android/app/google-services.json`,
+/// `ios/Runner/GoogleService-Info.plist`); without it initialisation throws,
+/// the app runs with Analytics and Crashlytics off, and nothing else changes.
 Future<void> _startFirebase() async {
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    await Firebase.initializeApp();
     await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(!kDebugMode);
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
       !kDebugMode,

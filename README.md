@@ -121,15 +121,18 @@ lib/
 ## Firebase (bring your own project)
 
 Analytics and Crashlytics are optional here: the app is not bound to a committed
-Firebase project, and every generated Firebase file is gitignored.
+Firebase project, and every generated Firebase file is gitignored. A fresh clone builds
+and runs as is; without `android/app/google-services.json` the Android build skips the
+Firebase Gradle plugins and the app runs with Analytics and Crashlytics off.
 
 1. Create a Firebase project and register an Android app with the package
    `ph.bettergov.budget` (and an iOS app with the same bundle id).
-2. From the repo root run `flutterfire configure` - it writes
-   `lib/firebase_options.dart`, `android/app/google-services.json` and
-   `ios/Runner/GoogleService-Info.plist`, and wires the Gradle and CocoaPods plugins.
-3. Templates for a hand-written setup: `lib/firebase_options.example.dart`,
-   `android/app/google-services.example.json`, `ios/Runner/GoogleService-Info.example.plist`.
+2. From the repo root run `flutterfire configure`. The app reads the platform files it
+   writes, `android/app/google-services.json` and `ios/Runner/GoogleService-Info.plist`
+   (`Firebase.initializeApp()` with no Dart options); the `lib/firebase_options.dart` it
+   also writes is not used.
+3. Templates for a hand-written setup: `android/app/google-services.example.json`,
+   `ios/Runner/GoogleService-Info.example.plist`.
 4. Only if you use Hosting or App Distribution, add your own `firebase.json` and
    `.firebaserc` (also gitignored).
 
@@ -151,15 +154,16 @@ Firebase failures never block the budget screens: initialisation is guarded.
   `android.permission.DUMP`.
 - **Release signing** - the upload keystore lives outside git
   (`android/app/upload-keystore.jks` + `android/key.properties`, both ignored). Keep a
-  backup: without it you cannot publish an update.
+  backup: without it you cannot publish an update. Without `key.properties` a release
+  build falls back to the debug key, and Gradle warns that it must not be published.
 - **Links** - every URL that comes from the API is opened through
   `openExternal()` (`core/utils/links.dart`), which only hands `http`/`https` to the
   platform, so a `javascript:`/`intent:`/`file:` URL cannot reach another app.
 - **Telemetry** - Analytics and Crashlytics start disabled in debug builds; events carry
   a dataset name, a line id and a tab name, never a place, account or device identifier.
 - **No other secrets** - the only credentials in the repo are Firebase *client*
-  identifiers (`google-services.json`, `GoogleService-Info.plist`,
-  `lib/firebase_options.dart`). Restrict them in the Google Cloud console to the Android
+  identifiers (`google-services.json`, `GoogleService-Info.plist`), and both stay out of
+  git. Restrict them in the Google Cloud console to the Android
   package `ph.bettergov.budget` (plus the release SHA-1) and the iOS bundle id, and turn on
   App Check.
 - No deep links, no WebView, no file writes; the only local storage is the theme choice.
