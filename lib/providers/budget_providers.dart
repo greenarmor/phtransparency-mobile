@@ -1,13 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/network/api_client.dart';
+import '../core/network/cache_store.dart';
 import '../data/models/budget_models.dart';
 import '../data/models/place.dart';
 import '../data/services/budget_api.dart';
-import '../data/services/gaa_service.dart';
 import '../data/services/scope_service.dart';
 
-final apiClientProvider = Provider<ApiClient>((ref) => ApiClient());
+final apiClientProvider = Provider<ApiClient>(
+  (ref) => ApiClient(cacheStore: FileCacheStore()),
+);
+
+/// True while the API is unreachable and cached responses are being shown.
+final servingFromCacheProvider = Provider<ValueNotifier<bool>>(
+  (ref) => ref.watch(apiClientProvider).servingFromCache,
+);
 
 final budgetApiProvider = Provider<BudgetApi>(
   (ref) => BudgetApi(ref.watch(apiClientProvider)),
@@ -15,10 +23,6 @@ final budgetApiProvider = Provider<BudgetApi>(
 
 final scopeServiceProvider = Provider<ScopeService>(
   (ref) => ScopeService(ref.watch(budgetApiProvider)),
-);
-
-final gaaServiceProvider = Provider<GaaService>(
-  (ref) => GaaService(ref.watch(budgetApiProvider)),
 );
 
 class PlaceController extends Notifier<PlaceSelection> {
@@ -50,10 +54,6 @@ final scopeProvider = FutureProvider<ScopeResult>(
 
 final overviewProvider = FutureProvider<Overview>(
   (ref) async => (await ref.watch(budgetApiProvider).overview()).data,
-);
-
-final gaaProvider = FutureProvider<GaaDataset>(
-  (ref) => ref.watch(gaaServiceProvider).load(ref.watch(placeProvider)),
 );
 
 class ProjectArgs {
