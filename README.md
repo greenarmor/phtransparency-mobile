@@ -1,10 +1,25 @@
 # BetterGov Budget (mobile)
 
+![BetterGov Budget: the 2027 budget, region by region. NEP vs House bill, by region and district.](docs/store/feature-graphic.png)
+
 A mobile view of the [BetterGov.ph budget transparency portal](https://budget.bettergov.ph)
 for **every place in the Philippines**: the 18 regions, and inside them the 254
 legislative districts. Each view answers what the place gets in FY 2027 under the NEP and
 under the House bill, with the page each figure is on, and what has been enacted for it
 since 2020.
+
+## Screenshots
+
+From the 1.0.2 (3) release build on a Moto G75 5G. Both themes share one layout; only the
+colours change.
+
+| National totals | A region | Inserted projects | Map |
+| --- | --- | --- | --- |
+| <img src="docs/store/screenshots/light/01-national.png" width="180" alt="National totals, light theme"> | <img src="docs/store/screenshots/light/04-region.png" width="180" alt="Region VII, light theme"> | <img src="docs/store/screenshots/light/05-inserted.png" width="180" alt="Inserted projects, light theme"> | <img src="docs/store/screenshots/light/07-map.png" width="180" alt="Map of Region VII, light theme"> |
+| <img src="docs/store/screenshots/dark/01-national.png" width="180" alt="National totals, dark theme"> | <img src="docs/store/screenshots/dark/04-region.png" width="180" alt="Region VII, dark theme"> | <img src="docs/store/screenshots/dark/05-inserted.png" width="180" alt="Inserted projects, dark theme"> | <img src="docs/store/screenshots/dark/07-map.png" width="180" alt="Map of Region VII, dark theme"> |
+
+All eight screens in each theme: [light](docs/store/screenshots/light) ·
+[dark](docs/store/screenshots/dark).
 
 ## Download
 
@@ -189,3 +204,17 @@ icon); every other size is generated from it.
   when one exists.
 
 Regenerate them all from the master whenever the tile changes.
+
+## Store listing images
+
+`docs/store/` holds the Google Play graphics. They are not bundled into the app.
+
+- `feature-graphic.png`: the 1024 × 500 feature graphic.
+- `screenshots/light/` and `screenshots/dark/`: eight 1080 × 2160 phone screenshots per
+  theme, 24-bit PNG with no alpha, numbered in listing order. Play takes up to eight, so
+  upload one theme's set. Both were captured on a device at the same scroll positions, with
+  a fixed 9:41 status bar, so the two sets match screen for screen.
+- The store icon is the 512 px master, `assets/images/app_icon_512.png`.
+
+Retake the screenshots whenever a captured screen changes, so the listing shows the app as
+it is.
