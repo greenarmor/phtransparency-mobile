@@ -170,10 +170,19 @@ Firebase failures never block the budget screens: initialisation is guarded.
 
 ## App icon
 
-The launcher icons come from the official BetterGov.ph mark at
-`assets/images/welcome_logo.png`: white background, art scaled to 86% of the tile, so the
-mask on any launcher still clears the artwork. Android ships
-`mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}/ic_launcher.png` at 48/72/96/144/192 px; iOS ships
-all 15 `AppIcon.appiconset` slots; `assets/images/app_icon_512.png` is the 512 px master for
-store listings. Regenerate them all from the source PNG (crop to the alpha bounding box,
-scale to fill, flatten on white) whenever the mark changes.
+The launcher icon is the BetterGovPH tile: the white mark and wordmark on a blue diagonal
+gradient. `assets/images/app_icon_512.png` is the 512 px master (also the store-listing
+icon); every other size is generated from it.
+
+- **Android 8+** - an adaptive icon, `mipmap-anydpi-v26/ic_launcher.xml`, with two layers
+  per density at 108/162/216/324/432 px: `ic_launcher_background.png` (the gradient,
+  continued to the edge of the 108 dp canvas) and `ic_launcher_foreground.png` (the white
+  mark on transparent). The mark's farthest pixel sits on the 33 dp radius of the safe zone,
+  so no launcher mask clips it, and the visible icon keeps the master's proportions. The
+  foreground doubles as the monochrome layer for Android 13+ themed icons.
+- **Android 7** - the master as a square `mipmap-*/ic_launcher.png` at 48/72/96/144/192 px.
+- **iOS** - all 15 `AppIcon.appiconset` files, opaque. The 1024 px marketing icon is drawn
+  from a 2x upscale of the mark over a full-size gradient; replace it from a 1024 px master
+  when one exists.
+
+Regenerate them all from the master whenever the tile changes.
