@@ -23,11 +23,18 @@ class InsertedScreen extends ConsumerStatefulWidget {
 
 class _InsertedScreenState extends ConsumerState<InsertedScreen> {
   final _search = TextEditingController();
+  InsertedIndex? _index;
 
   @override
   void dispose() {
     _search.dispose();
     super.dispose();
+  }
+
+  InsertedIndex _indexFor(List<ProjectRow> all) {
+    final index = _index;
+    if (index != null && identical(index.rows, all)) return index;
+    return _index = InsertedIndex(all);
   }
 
   @override
@@ -65,7 +72,7 @@ class _InsertedScreenState extends ConsumerState<InsertedScreen> {
   }
 
   Widget _list(BuildContext context, List<ProjectRow> all) {
-    final filtered = filterInsertedProjects(all, _search.text);
+    final filtered = _indexFor(all).filter(_search.text);
     final count = NumberFormat.decimalPattern();
 
     return RefreshIndicator(
