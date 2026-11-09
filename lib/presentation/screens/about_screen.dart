@@ -88,6 +88,7 @@ class AboutScreen extends ConsumerWidget {
             onRetry: () => ref.invalidate(overviewProvider),
             builder: (context, overview) => _FactsCard(overview: overview),
           ),
+          const SizedBox(height: 10),
           const NoteCard(
             title: 'Usage events and crash reports',
             body:

@@ -39,8 +39,10 @@ class AppColors extends ThemeExtension<AppColors> {
     paper2: Color(0xFFE8E2D2),
     ink: Color(0xFF17171B),
     ink2: Color(0xFF3C3C42),
-    ink3: Color(0xFF6A6A72),
-    inkMute: Color(0xFF8A8A90),
+    // ink3 carries small meta text on both paper tones: 4.9:1 on paper2.
+    ink3: Color(0xFF5F5F67),
+    // inkMute is for icons and rules only (3:1 on paper2), never body text.
+    inkMute: Color(0xFF7A7A81),
     rule: Color(0xFFD4CFC3),
     ruleSoft: Color(0xFFE4DFD2),
     accent: Color(0xFFC8262C),
@@ -60,7 +62,8 @@ class AppColors extends ThemeExtension<AppColors> {
     inkMute: Color(0xFF7E7A70),
     rule: Color(0xFF2E3A54),
     ruleSoft: Color(0xFF243044),
-    accent: Color(0xFFE04A4E),
+    // Lifted so red labels and status pills read at 4.5:1 on the navy paper.
+    accent: Color(0xFFF06569),
     accentDeep: Color(0xFFF07074),
     accentSoft: Color(0xFF3A1C22),
     positive: Color(0xFF8AD08A),
@@ -221,7 +224,7 @@ class AppTheme {
           horizontal: 14,
           vertical: 14,
         ),
-        hintStyle: TextStyle(color: colors.inkMute, fontSize: 15),
+        hintStyle: TextStyle(color: colors.ink3, fontSize: 15),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: colors.rule),

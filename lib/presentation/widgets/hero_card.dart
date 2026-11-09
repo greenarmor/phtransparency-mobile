@@ -17,15 +17,20 @@ class HeroCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final card = isDark ? _surface(true) : _stacked();
 
-    return Transform(
-      alignment: Alignment.center,
-      transform: isDark
-          ? Matrix4.identity()
-          : (Matrix4.identity()
-              ..setEntry(3, 2, 0.0014)
-              ..rotateX(0.075)
-              ..rotateY(-0.06)),
-      child: card,
+    // Its own semantics node, so a screen reader reads the card as one stop
+    // instead of running it into the rest of the list item.
+    return Semantics(
+      container: true,
+      child: Transform(
+        alignment: Alignment.center,
+        transform: isDark
+            ? Matrix4.identity()
+            : (Matrix4.identity()
+                ..setEntry(3, 2, 0.0014)
+                ..rotateX(0.075)
+                ..rotateY(-0.06)),
+        child: card,
+      ),
     );
   }
 

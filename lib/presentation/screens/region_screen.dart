@@ -76,6 +76,7 @@ class _RegionMoneyScreenState extends ConsumerState<RegionMoneyScreen> {
         await ref.read(scopeProvider.future);
       },
       child: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -210,6 +211,7 @@ class _RegionMoneyScreenState extends ConsumerState<RegionMoneyScreen> {
                   return ProjectCard(
                     item: item,
                     onTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
                       logProjectOpen(
                         dataset: item.project.dataset,
                         id: item.project.id,

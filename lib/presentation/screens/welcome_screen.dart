@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/app_config.dart';
+import '../../core/theme/app_theme.dart';
 import '../../providers/theme_providers.dart';
 import '../widgets/app_logo.dart';
 
@@ -53,10 +55,23 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     context.go('/');
   }
 
+  /// The poster is cream whatever the app theme is, so it always reads with
+  /// the light theme: dark-mode greys on cream fall to about 2:1.
+  static final _posterTheme = AppTheme.light();
+
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+      ),
+      child: Theme(data: _posterTheme, child: _scaffold(reduceMotion)),
+    );
+  }
+
+  Widget _scaffold(bool reduceMotion) {
     return Scaffold(
       backgroundColor: _SplashPalette.cream,
       body: SafeArea(
@@ -431,7 +446,16 @@ class _ThemeChooser extends ConsumerWidget {
             ],
             selected: {mode},
             showSelectedIcon: false,
-            style: const ButtonStyle(visualDensity: VisualDensity.compact),
+            style: ButtonStyle(
+              visualDensity: VisualDensity.compact,
+              // The poster art runs behind this row: opaque segments keep the
+              // Light and Dark labels off the red halftone.
+              backgroundColor: WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.selected)
+                    ? null
+                    : _SplashPalette.cream,
+              ),
+            ),
             onSelectionChanged: (value) =>
                 ref.read(themeModeProvider.notifier).select(value.first),
           ),

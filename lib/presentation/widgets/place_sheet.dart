@@ -101,7 +101,10 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            Padding(
+            Container(
+              // Full width, so the heading lines up with the search box and
+              // the list instead of floating as a centred block.
+              width: double.infinity,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -64,7 +64,7 @@ class YearBars extends StatelessWidget {
                             ? (onDark ? Colors.white : colors.accent)
                             : (onDark
                                   ? Colors.white.withValues(alpha: 0.7)
-                                  : colors.inkMute),
+                                  : colors.ink3),
                       ),
                     ),
                   ],

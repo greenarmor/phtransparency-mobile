@@ -106,9 +106,12 @@ class _StatusTile extends StatelessWidget {
       ),
     );
 
+    // The label already says what the two texts say; excluding them stops
+    // screen readers announcing every tile twice.
     if (onTap == null) {
       return Semantics(
         container: true,
+        excludeSemantics: true,
         label: '${groupShort[group] ?? group}, ${plural(rows, 'line')}',
         child: content,
       );
@@ -117,6 +120,8 @@ class _StatusTile extends StatelessWidget {
     return Semantics(
       button: true,
       selected: active,
+      excludeSemantics: true,
+      onTap: onTap,
       label: '${groupShort[group] ?? group}, ${plural(rows, 'line')}',
       child: InkWell(
         onTap: onTap,

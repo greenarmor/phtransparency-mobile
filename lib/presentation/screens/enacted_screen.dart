@@ -60,6 +60,7 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
         await ref.read(gaaProvider.future);
       },
       child: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -114,6 +115,7 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                     suffixIcon: _search.text.isEmpty
                         ? null
                         : IconButton(
+                            tooltip: 'Clear search',
                             icon: const Icon(Icons.close, size: 18),
                             onPressed: () {
                               _search.clear();

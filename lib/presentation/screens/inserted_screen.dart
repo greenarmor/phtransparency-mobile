@@ -82,6 +82,7 @@ class _InsertedScreenState extends ConsumerState<InsertedScreen> {
       },
       child: CustomScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -145,6 +146,9 @@ class _InsertedScreenState extends ConsumerState<InsertedScreen> {
                   return ProjectCard(
                     item: ScopedProject(project: row),
                     onTap: () {
+                      // Otherwise the search box takes focus back, and the
+                      // keyboard covers the list, on the way back.
+                      FocusManager.instance.primaryFocus?.unfocus();
                       logProjectOpen(dataset: row.dataset, id: row.id);
                       context.push(
                         '/project/${row.dataset}/${Uri.encodeComponent(row.id)}',
