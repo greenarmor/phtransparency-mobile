@@ -20,7 +20,7 @@ struct ProjectListView: View {
             if let error { Text(error).foregroundStyle(Palette.red) }
             if total > 0 { Text("\(total.formatted()) lines").font(.caption).foregroundStyle(.secondary) }
             ForEach(rows) { row in
-                NavigationLink(value: row) { ProjectRowView(row: row) }
+                NavigationLink { ProjectDetailView(row: row) } label: { ProjectRowView(row: row) }
                     .onAppear { if row.id == rows.last?.id { Task { await more() } } }
             }
             if loading { ProgressView().frame(maxWidth: .infinity) }
@@ -28,7 +28,6 @@ struct ProjectListView: View {
         }
         .listStyle(.plain)
         .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: ProjectRow.self) { ProjectDetailView(row: $0) }
         .searchable(text: $query, prompt: "Search title, office, program")
         .onSubmit(of: .search) { Task { await reload() } }
         .onChange(of: query) { _, v in if v.isEmpty { Task { await reload() } } }

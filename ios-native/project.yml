@@ -26,3 +26,20 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1"
         DEVELOPMENT_TEAM: ""
+  BetterGovBudgetUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [BetterGovBudgetUITests]
+    dependencies:
+      - target: BetterGovBudget
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: ph.bettergov.budget.uitests
+schemes:
+  BetterGovBudget:
+    build:
+      targets:
+        BetterGovBudget: all
+    test:
+      targets: [BetterGovBudgetUITests]

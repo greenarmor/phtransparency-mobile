@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DA876FB4CB920FCF2520987 /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C13A61C54C0336954B02B9 /* SmokeTests.swift */; };
 		1BB41AFBB09F82088E230524 /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86641CEC012610C3813B207 /* Format.swift */; };
 		2483509F5C21E3BFA5349B6E /* RegionsDistricts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEC7CD8FBEA1287A3C78A0D /* RegionsDistricts.swift */; };
 		735457F06FD4F4DA2B932BF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86E91EF81CFDDEBA07444ECE /* Assets.xcassets */; };
@@ -19,16 +20,28 @@
 		E82D367E4FE1B15EBA99156E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519F195DB1E2EBF8EDD933FB /* Models.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A95A96F3177EDDAB2D2A357F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 37E0C7826004B1B7D1009011 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 160496D632C308B6BFCC6616;
+			remoteInfo = BetterGovBudget;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		048C5A71C319BDBA77350C53 /* BetterGovBudgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterGovBudgetApp.swift; sourceTree = "<group>"; };
 		05AC65E1DB885A0C6765A48F /* BudgetAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetAPI.swift; sourceTree = "<group>"; };
 		1A72E8EF7F3CAB4453811C79 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
 		35EFC2B95FF00A0586CF2E8B /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		4345365C32C2D4268B595152 /* NationalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalView.swift; sourceTree = "<group>"; };
+		49C0220823C97B278164635B /* BetterGovBudgetUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BetterGovBudgetUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		519F195DB1E2EBF8EDD933FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		6A9590C22BB5881BA6DC53F6 /* BetterGovBudget.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BetterGovBudget.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86E91EF81CFDDEBA07444ECE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AE9A3F8980ED3DA08292510D /* EnactedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnactedView.swift; sourceTree = "<group>"; };
+		E6C13A61C54C0336954B02B9 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		EDEC7CD8FBEA1287A3C78A0D /* RegionsDistricts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionsDistricts.swift; sourceTree = "<group>"; };
 		F86641CEC012610C3813B207 /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -38,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				6F2D02534680F118D2F29338 /* BetterGovBudget */,
+				D683148AF6229AF9A7DA6155 /* BetterGovBudgetUITests */,
 				A26D9A409362B05DCC4C019A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,8 +77,17 @@
 			isa = PBXGroup;
 			children = (
 				6A9590C22BB5881BA6DC53F6 /* BetterGovBudget.app */,
+				49C0220823C97B278164635B /* BetterGovBudgetUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D683148AF6229AF9A7DA6155 /* BetterGovBudgetUITests */ = {
+			isa = PBXGroup;
+			children = (
+				E6C13A61C54C0336954B02B9 /* SmokeTests.swift */,
+			);
+			path = BetterGovBudgetUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -88,6 +111,24 @@
 			productReference = 6A9590C22BB5881BA6DC53F6 /* BetterGovBudget.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5614AF9AEA6384638D8E973D /* BetterGovBudgetUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D75D6E939A6392F6C1831B5 /* Build configuration list for PBXNativeTarget "BetterGovBudgetUITests" */;
+			buildPhases = (
+				32B47515F281AD06439DF169 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F62EF29C13A7F02F1032A456 /* PBXTargetDependency */,
+			);
+			name = BetterGovBudgetUITests;
+			packageProductDependencies = (
+			);
+			productName = BetterGovBudgetUITests;
+			productReference = 49C0220823C97B278164635B /* BetterGovBudgetUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -99,6 +140,9 @@
 				TargetAttributes = {
 					160496D632C308B6BFCC6616 = {
 						DevelopmentTeam = "";
+					};
+					5614AF9AEA6384638D8E973D = {
+						TestTargetID = 160496D632C308B6BFCC6616;
 					};
 				};
 			};
@@ -117,6 +161,7 @@
 			projectRoot = "";
 			targets = (
 				160496D632C308B6BFCC6616 /* BetterGovBudget */,
+				5614AF9AEA6384638D8E973D /* BetterGovBudgetUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -133,6 +178,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		32B47515F281AD06439DF169 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DA876FB4CB920FCF2520987 /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BCC3B6DEEB0B7720BD87E467 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -150,6 +203,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F62EF29C13A7F02F1032A456 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 160496D632C308B6BFCC6616 /* BetterGovBudget */;
+			targetProxy = A95A96F3177EDDAB2D2A357F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2C4B2584FAD222A2DE169C5F /* Debug */ = {
@@ -263,6 +324,40 @@
 			};
 			name = Release;
 		};
+		C0EFFCA265D941860DC6A59B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ph.bettergov.budget.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BetterGovBudget;
+			};
+			name = Release;
+		};
+		D3A8FE4D0C154108F8EC29EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ph.bettergov.budget.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = BetterGovBudget;
+			};
+			name = Debug;
+		};
 		DBD65EB16FEDE35228A432BE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -324,6 +419,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3D75D6E939A6392F6C1831B5 /* Build configuration list for PBXNativeTarget "BetterGovBudgetUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3A8FE4D0C154108F8EC29EA /* Debug */,
+				C0EFFCA265D941860DC6A59B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		B199A96F29EFBBC0C991B1ED /* Build configuration list for PBXProject "BetterGovBudget" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
