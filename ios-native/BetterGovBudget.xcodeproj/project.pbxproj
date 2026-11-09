@@ -1,0 +1,348 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1BB41AFBB09F82088E230524 /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86641CEC012610C3813B207 /* Format.swift */; };
+		2483509F5C21E3BFA5349B6E /* RegionsDistricts.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEC7CD8FBEA1287A3C78A0D /* RegionsDistricts.swift */; };
+		735457F06FD4F4DA2B932BF5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86E91EF81CFDDEBA07444ECE /* Assets.xcassets */; };
+		92E337D8DBBA6F4E7798B0F4 /* BudgetAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05AC65E1DB885A0C6765A48F /* BudgetAPI.swift */; };
+		B85DA44E86DE7A489A604CB7 /* NationalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4345365C32C2D4268B595152 /* NationalView.swift */; };
+		CBD573F6737815DF181B08E7 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFC2B95FF00A0586CF2E8B /* Components.swift */; };
+		CDDB9AAE6A87E2D2EAAD8CBE /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A72E8EF7F3CAB4453811C79 /* ProjectListView.swift */; };
+		D0E2AE58DCF6F2DD28B83319 /* EnactedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9A3F8980ED3DA08292510D /* EnactedView.swift */; };
+		E7BF058C47FECBF01868432B /* BetterGovBudgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 048C5A71C319BDBA77350C53 /* BetterGovBudgetApp.swift */; };
+		E82D367E4FE1B15EBA99156E /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519F195DB1E2EBF8EDD933FB /* Models.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		048C5A71C319BDBA77350C53 /* BetterGovBudgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterGovBudgetApp.swift; sourceTree = "<group>"; };
+		05AC65E1DB885A0C6765A48F /* BudgetAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetAPI.swift; sourceTree = "<group>"; };
+		1A72E8EF7F3CAB4453811C79 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
+		35EFC2B95FF00A0586CF2E8B /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		4345365C32C2D4268B595152 /* NationalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NationalView.swift; sourceTree = "<group>"; };
+		519F195DB1E2EBF8EDD933FB /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		6A9590C22BB5881BA6DC53F6 /* BetterGovBudget.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BetterGovBudget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86E91EF81CFDDEBA07444ECE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AE9A3F8980ED3DA08292510D /* EnactedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnactedView.swift; sourceTree = "<group>"; };
+		EDEC7CD8FBEA1287A3C78A0D /* RegionsDistricts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegionsDistricts.swift; sourceTree = "<group>"; };
+		F86641CEC012610C3813B207 /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		5FC2B21A8F630F0F63D48C14 = {
+			isa = PBXGroup;
+			children = (
+				6F2D02534680F118D2F29338 /* BetterGovBudget */,
+				A26D9A409362B05DCC4C019A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6F2D02534680F118D2F29338 /* BetterGovBudget */ = {
+			isa = PBXGroup;
+			children = (
+				86E91EF81CFDDEBA07444ECE /* Assets.xcassets */,
+				048C5A71C319BDBA77350C53 /* BetterGovBudgetApp.swift */,
+				05AC65E1DB885A0C6765A48F /* BudgetAPI.swift */,
+				35EFC2B95FF00A0586CF2E8B /* Components.swift */,
+				AE9A3F8980ED3DA08292510D /* EnactedView.swift */,
+				F86641CEC012610C3813B207 /* Format.swift */,
+				519F195DB1E2EBF8EDD933FB /* Models.swift */,
+				4345365C32C2D4268B595152 /* NationalView.swift */,
+				1A72E8EF7F3CAB4453811C79 /* ProjectListView.swift */,
+				EDEC7CD8FBEA1287A3C78A0D /* RegionsDistricts.swift */,
+			);
+			path = BetterGovBudget;
+			sourceTree = "<group>";
+		};
+		A26D9A409362B05DCC4C019A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6A9590C22BB5881BA6DC53F6 /* BetterGovBudget.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		160496D632C308B6BFCC6616 /* BetterGovBudget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E436109CA897C0EB685DB28A /* Build configuration list for PBXNativeTarget "BetterGovBudget" */;
+			buildPhases = (
+				BCC3B6DEEB0B7720BD87E467 /* Sources */,
+				2A766EDE27F54BF06A65F976 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BetterGovBudget;
+			packageProductDependencies = (
+			);
+			productName = BetterGovBudget;
+			productReference = 6A9590C22BB5881BA6DC53F6 /* BetterGovBudget.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		37E0C7826004B1B7D1009011 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					160496D632C308B6BFCC6616 = {
+						DevelopmentTeam = "";
+					};
+				};
+			};
+			buildConfigurationList = B199A96F29EFBBC0C991B1ED /* Build configuration list for PBXProject "BetterGovBudget" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5FC2B21A8F630F0F63D48C14;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A26D9A409362B05DCC4C019A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				160496D632C308B6BFCC6616 /* BetterGovBudget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2A766EDE27F54BF06A65F976 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				735457F06FD4F4DA2B932BF5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		BCC3B6DEEB0B7720BD87E467 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7BF058C47FECBF01868432B /* BetterGovBudgetApp.swift in Sources */,
+				92E337D8DBBA6F4E7798B0F4 /* BudgetAPI.swift in Sources */,
+				CBD573F6737815DF181B08E7 /* Components.swift in Sources */,
+				D0E2AE58DCF6F2DD28B83319 /* EnactedView.swift in Sources */,
+				1BB41AFBB09F82088E230524 /* Format.swift in Sources */,
+				E82D367E4FE1B15EBA99156E /* Models.swift in Sources */,
+				B85DA44E86DE7A489A604CB7 /* NationalView.swift in Sources */,
+				CDDB9AAE6A87E2D2EAAD8CBE /* ProjectListView.swift in Sources */,
+				2483509F5C21E3BFA5349B6E /* RegionsDistricts.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2C4B2584FAD222A2DE169C5F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		4104F98BC4EDB6A5A17B4AEB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "BetterGov Budget";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ph.bettergov.budget;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		7A77524F1BFC378AC58BE895 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "BetterGov Budget";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.reference";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ph.bettergov.budget;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		DBD65EB16FEDE35228A432BE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 2.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B199A96F29EFBBC0C991B1ED /* Build configuration list for PBXProject "BetterGovBudget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2C4B2584FAD222A2DE169C5F /* Debug */,
+				DBD65EB16FEDE35228A432BE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E436109CA897C0EB685DB28A /* Build configuration list for PBXNativeTarget "BetterGovBudget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4104F98BC4EDB6A5A17B4AEB /* Debug */,
+				7A77524F1BFC378AC58BE895 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 37E0C7826004B1B7D1009011 /* Project object */;
+}
