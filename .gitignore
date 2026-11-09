@@ -60,3 +60,14 @@ firebase.json
 
 # Release binaries are published as GitHub Releases assets, not committed
 releases/*.apk
+
+# Root reference artifacts (handbooks, posters, journey maps — kept local)
+/BETTERGOV-CHAIN.pdf
+/BETTERGOV-Chain-BGOV.pdf
+/Civic-Tech-Project-Community-Handbook-v2-2-compressed.pdf
+/UPDATEDDVOMNL-09NOVPPLSTAFF.pdf
+/volunteer-onboarding-user-journey.pdf
+/volunteer-onboarding-user-journey (1).pdf
+/main-screen_menu.jpg
+/mainscreen.jpg
+/welcome-screen.jpg
