@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 8+: the BetterGovPH mark on its blue gradient, as layers, so every
+     launcher mask (circle, squircle, rounded square) keeps the whole mark
+     inside the 66 dp safe zone. The white mark doubles as the monochrome
+     layer for Android 13+ themed icons. Older versions use the square
+     mipmap-*/ic_launcher.png. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@mipmap/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

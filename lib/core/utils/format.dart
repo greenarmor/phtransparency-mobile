@@ -2,11 +2,17 @@ import 'package:intl/intl.dart';
 
 const dash = '-';
 
+final _billions = NumberFormat('#,##0.00');
+
+/// Short groups the whole count: "13,460 lines", "1,048".
+String groupedInt(int value) => NumberFormat.decimalPattern().format(value);
+
 String compactPeso(int? amount) {
   if (amount == null) return dash;
   final abs = amount.abs();
   if (abs >= 1000000000) {
-    return '₱${(amount / 1000000000).toStringAsFixed(2)}B';
+    // Enacted totals run past a thousand billion: "₱6,793.16B".
+    return '₱${_billions.format(amount / 1000000000)}B';
   }
   if (abs >= 1000000) {
     return '₱${(amount / 1000000).toStringAsFixed(1)}M';
@@ -27,8 +33,9 @@ String signedCompactPeso(int? amount) {
   return '$sign${compactPeso(amount.abs())}';
 }
 
+/// "1 line", "13,460 lines": counts are grouped like every other figure.
 String plural(int count, String one, [String? many]) =>
-    '$count ${count == 1 ? one : (many ?? '${one}s')}';
+    '${groupedInt(count)} ${count == 1 ? one : (many ?? '${one}s')}';
 
 String titleCasePlace(String value) => value
     .split(RegExp(r'\s+'))

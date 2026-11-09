@@ -195,7 +195,7 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final color = tint ?? colors.ink3;
-    return Container(
+    final card = Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: colors.paper,
@@ -229,6 +229,7 @@ class NoteCard extends StatelessWidget {
         ],
       ),
     );
+    return Semantics(container: true, child: card);
   }
 }
 

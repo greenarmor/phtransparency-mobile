@@ -132,6 +132,18 @@ class _RegionShellState extends ConsumerState<RegionShell> {
     context.go('/');
   }
 
+  /// The region view is reached with `go`, so it is the only page on the
+  /// stack and a system back would close the app. Back walks the same way the
+  /// app bar does instead: Enacted returns to Money, Money to the Philippines.
+  void _onSystemBack(bool didPop, Object? _) {
+    if (didPop) return;
+    if (_index == 1) {
+      _go(0);
+    } else {
+      _back();
+    }
+  }
+
   void _go(int target) {
     final current = _index;
     if (target == current) return;
@@ -168,62 +180,75 @@ class _RegionShellState extends ConsumerState<RegionShell> {
 
     final index = _index;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: 'Back to the Philippines',
-          onPressed: _back,
-          icon: const Icon(Icons.arrow_back),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
-            Text(
-              subtitle,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTheme.meta(context, size: 11.5),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: _onSystemBack,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Back to the Philippines',
+            onPressed: _back,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(title, maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(
+                subtitle,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: AppTheme.meta(context, size: 11.5),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              tooltip: 'About this app',
+              onPressed: () {
+                logTabOpen('about');
+                context.push('/about');
+              },
+              icon: const Icon(Icons.info_outline),
+            ),
+            IconButton(
+              tooltip: 'Change place',
+              onPressed: () => context.push('/place'),
+              icon: const Icon(Icons.place_outlined),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            tooltip: 'About this app',
-            onPressed: () {
-              logTabOpen('about');
-              context.push('/about');
-            },
-            icon: const Icon(Icons.info_outline),
-          ),
-          IconButton(
-            tooltip: 'Change place',
-            onPressed: () => context.push('/place'),
-            icon: const Icon(Icons.place_outlined),
-          ),
-        ],
-      ),
-      body: PageView(
-        controller: _pager,
-        onPageChanged: _go,
-        children: const [
-          _KeepAlive(child: RegionMoneyScreen()),
-          _KeepAlive(child: EnactedScreen()),
-        ],
-      ),
-      bottomNavigationBar: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0, end: 1),
-        duration: const Duration(milliseconds: 340),
-        curve: Curves.easeOutCubic,
-        builder: (context, value, child) => Opacity(
-          opacity: value,
-          child: FractionalTranslation(
-            translation: Offset(0, 0.35 * (1 - value)),
-            child: child,
-          ),
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            // go_router's shell navigator. Its pages are empty (the tabs are
+            // the PageView below), but it must stay mounted: a system back
+            // walks it, and an unmounted one throws and closes the app.
+            Offstage(child: widget.child),
+            PageView(
+              controller: _pager,
+              onPageChanged: _go,
+              children: const [
+                _KeepAlive(child: RegionMoneyScreen()),
+                _KeepAlive(child: EnactedScreen()),
+              ],
+            ),
+          ],
         ),
-        child: RegionTabBar(index: index, onSelected: _go),
+        bottomNavigationBar: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(milliseconds: 340),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) => Opacity(
+            opacity: value,
+            child: FractionalTranslation(
+              translation: Offset(0, 0.35 * (1 - value)),
+              child: child,
+            ),
+          ),
+          child: RegionTabBar(index: index, onSelected: _go),
+        ),
       ),
     );
   }

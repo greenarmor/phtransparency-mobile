@@ -131,6 +131,27 @@ void main() {
     expect(filterInsertedProjects([_carmen, _cebu], 'no such line'), isEmpty);
   });
 
+  test('the prebuilt index finds exactly what the plain filter finds', () {
+    final rows = List<ProjectRow>.unmodifiable([_carmen, _cebu]);
+    final index = InsertedIndex(rows);
+
+    expect(identical(index.filter('  '), rows), isTrue);
+    for (final query in [
+      'carmen',
+      'CEBU CITY',
+      'fmr',
+      'region vii',
+      ' bohol ',
+      'no such line',
+    ]) {
+      expect(
+        index.filter(query),
+        filterInsertedProjects(rows, query),
+        reason: query,
+      );
+    }
+  });
+
   testWidgets('the inserted page lists every House-only line', (tester) async {
     await _open(tester);
 

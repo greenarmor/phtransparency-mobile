@@ -149,10 +149,11 @@ class GaaService {
       }
     }
 
+    final latest = AppConfig.gaaYears.last;
     rows.sort((a, b) {
       final byLatest = b.program
-          .amountFor(2026)
-          .compareTo(a.program.amountFor(2026));
+          .amountFor(latest)
+          .compareTo(a.program.amountFor(latest));
       if (byLatest != 0) return byLatest;
       return a.program.name.toLowerCase().compareTo(
         b.program.name.toLowerCase(),

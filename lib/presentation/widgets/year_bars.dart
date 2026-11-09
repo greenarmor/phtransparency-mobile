@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/config/app_config.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/utils/format.dart';
 
 class YearBars extends StatelessWidget {
   const YearBars({
@@ -64,7 +64,7 @@ class YearBars extends StatelessWidget {
                             ? (onDark ? Colors.white : colors.accent)
                             : (onDark
                                   ? Colors.white.withValues(alpha: 0.7)
-                                  : colors.inkMute),
+                                  : colors.ink3),
                       ),
                     ),
                   ],
@@ -95,7 +95,7 @@ class YearStrip extends StatelessWidget {
       spacing: 6,
       runSpacing: 6,
       children: [
-        for (final year in AppYears.values)
+        for (final year in AppConfig.gaaYears)
           ChoiceChip(
             label: Text('$year'),
             selected: year == selected,
@@ -106,12 +106,3 @@ class YearStrip extends StatelessWidget {
     );
   }
 }
-
-class AppYears {
-  AppYears._();
-
-  static const values = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
-}
-
-String yearAmountLabel(Map<int, int> totals, int year) =>
-    compactPeso(totals[year]);

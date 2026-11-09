@@ -1,10 +1,25 @@
 # BetterGov Budget (mobile)
 
+![BetterGov Budget: the 2027 budget, region by region. NEP vs House bill, by region and district.](docs/store/feature-graphic.png)
+
 A mobile view of the [BetterGov.ph budget transparency portal](https://budget.bettergov.ph)
 for **every place in the Philippines**: the 18 regions, and inside them the 254
 legislative districts. Each view answers what the place gets in FY 2027 under the NEP and
 under the House bill, with the page each figure is on, and what has been enacted for it
 since 2020.
+
+## Screenshots
+
+From the 1.0.2 (3) release build on a Moto G75 5G. Both themes share one layout; only the
+colours change.
+
+| National totals | A region | Inserted projects | Map |
+| --- | --- | --- | --- |
+| <img src="docs/store/screenshots/light/01-national.png" width="180" alt="National totals, light theme"> | <img src="docs/store/screenshots/light/04-region.png" width="180" alt="Region VII, light theme"> | <img src="docs/store/screenshots/light/05-inserted.png" width="180" alt="Inserted projects, light theme"> | <img src="docs/store/screenshots/light/07-map.png" width="180" alt="Map of Region VII, light theme"> |
+| <img src="docs/store/screenshots/dark/01-national.png" width="180" alt="National totals, dark theme"> | <img src="docs/store/screenshots/dark/04-region.png" width="180" alt="Region VII, dark theme"> | <img src="docs/store/screenshots/dark/05-inserted.png" width="180" alt="Inserted projects, dark theme"> | <img src="docs/store/screenshots/dark/07-map.png" width="180" alt="Map of Region VII, dark theme"> |
+
+All eight screens in each theme: [light](docs/store/screenshots/light) ·
+[dark](docs/store/screenshots/dark).
 
 ## Download
 
@@ -121,15 +136,18 @@ lib/
 ## Firebase (bring your own project)
 
 Analytics and Crashlytics are optional here: the app is not bound to a committed
-Firebase project, and every generated Firebase file is gitignored.
+Firebase project, and every generated Firebase file is gitignored. A fresh clone builds
+and runs as is; without `android/app/google-services.json` the Android build skips the
+Firebase Gradle plugins and the app runs with Analytics and Crashlytics off.
 
 1. Create a Firebase project and register an Android app with the package
    `ph.bettergov.budget` (and an iOS app with the same bundle id).
-2. From the repo root run `flutterfire configure` - it writes
-   `lib/firebase_options.dart`, `android/app/google-services.json` and
-   `ios/Runner/GoogleService-Info.plist`, and wires the Gradle and CocoaPods plugins.
-3. Templates for a hand-written setup: `lib/firebase_options.example.dart`,
-   `android/app/google-services.example.json`, `ios/Runner/GoogleService-Info.example.plist`.
+2. From the repo root run `flutterfire configure`. The app reads the platform files it
+   writes, `android/app/google-services.json` and `ios/Runner/GoogleService-Info.plist`
+   (`Firebase.initializeApp()` with no Dart options); the `lib/firebase_options.dart` it
+   also writes is not used.
+3. Templates for a hand-written setup: `android/app/google-services.example.json`,
+   `ios/Runner/GoogleService-Info.example.plist`.
 4. Only if you use Hosting or App Distribution, add your own `firebase.json` and
    `.firebaserc` (also gitignored).
 
@@ -149,27 +167,54 @@ Firebase failures never block the budget screens: initialisation is guarded.
   `android:usesCleartextTraffic="false"`. The only exported components are `MainActivity`
   (launcher) and AndroidX's `ProfileInstallReceiver`, which is guarded by
   `android.permission.DUMP`.
+- **Permissions** - the app itself asks only for `INTERNET`. The advertising-ID permissions
+  that Firebase Analytics merges into the manifest are removed with `tools:node="remove"`:
+  the app shows no ads and never reads the advertising ID.
 - **Release signing** - the upload keystore lives outside git
   (`android/app/upload-keystore.jks` + `android/key.properties`, both ignored). Keep a
-  backup: without it you cannot publish an update.
+  backup: without it you cannot publish an update. Without `key.properties` a release
+  build falls back to the debug key, and Gradle warns that it must not be published.
 - **Links** - every URL that comes from the API is opened through
   `openExternal()` (`core/utils/links.dart`), which only hands `http`/`https` to the
   platform, so a `javascript:`/`intent:`/`file:` URL cannot reach another app.
 - **Telemetry** - Analytics and Crashlytics start disabled in debug builds; events carry
   a dataset name, a line id and a tab name, never a place, account or device identifier.
 - **No other secrets** - the only credentials in the repo are Firebase *client*
-  identifiers (`google-services.json`, `GoogleService-Info.plist`,
-  `lib/firebase_options.dart`). Restrict them in the Google Cloud console to the Android
+  identifiers (`google-services.json`, `GoogleService-Info.plist`), and both stay out of
+  git. Restrict them in the Google Cloud console to the Android
   package `ph.bettergov.budget` (plus the release SHA-1) and the iOS bundle id, and turn on
   App Check.
 - No deep links, no WebView, no file writes; the only local storage is the theme choice.
 
 ## App icon
 
-The launcher icons come from the official BetterGov.ph mark at
-`assets/images/welcome_logo.png`: white background, art scaled to 86% of the tile, so the
-mask on any launcher still clears the artwork. Android ships
-`mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}/ic_launcher.png` at 48/72/96/144/192 px; iOS ships
-all 15 `AppIcon.appiconset` slots; `assets/images/app_icon_512.png` is the 512 px master for
-store listings. Regenerate them all from the source PNG (crop to the alpha bounding box,
-scale to fill, flatten on white) whenever the mark changes.
+The launcher icon is the BetterGovPH tile: the white mark and wordmark on a blue diagonal
+gradient. `assets/images/app_icon_512.png` is the 512 px master (also the store-listing
+icon); every other size is generated from it.
+
+- **Android 8+** - an adaptive icon, `mipmap-anydpi-v26/ic_launcher.xml`, with two layers
+  per density at 108/162/216/324/432 px: `ic_launcher_background.png` (the gradient,
+  continued to the edge of the 108 dp canvas) and `ic_launcher_foreground.png` (the white
+  mark on transparent). The mark's farthest pixel sits on the 33 dp radius of the safe zone,
+  so no launcher mask clips it, and the visible icon keeps the master's proportions. The
+  foreground doubles as the monochrome layer for Android 13+ themed icons.
+- **Android 7** - the master as a square `mipmap-*/ic_launcher.png` at 48/72/96/144/192 px.
+- **iOS** - all 15 `AppIcon.appiconset` files, opaque. The 1024 px marketing icon is drawn
+  from a 2x upscale of the mark over a full-size gradient; replace it from a 1024 px master
+  when one exists.
+
+Regenerate them all from the master whenever the tile changes.
+
+## Store listing images
+
+`docs/store/` holds the Google Play graphics. They are not bundled into the app.
+
+- `feature-graphic.png`: the 1024 × 500 feature graphic.
+- `screenshots/light/` and `screenshots/dark/`: eight 1080 × 2160 phone screenshots per
+  theme, 24-bit PNG with no alpha, numbered in listing order. Play takes up to eight, so
+  upload one theme's set. Both were captured on a device at the same scroll positions, with
+  a fixed 9:41 status bar, so the two sets match screen for screen.
+- The store icon is the 512 px master, `assets/images/app_icon_512.png`.
+
+Retake the screenshots whenever a captured screen changes, so the listing shows the app as
+it is.

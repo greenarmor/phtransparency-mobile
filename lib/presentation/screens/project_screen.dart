@@ -311,7 +311,7 @@ class _AmountRow extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: amount == null ? colors.inkMute : colors.ink,
+                color: amount == null ? colors.ink3 : colors.ink,
                 fontFeatures: AppTheme.amountFeatures,
               ),
             ),

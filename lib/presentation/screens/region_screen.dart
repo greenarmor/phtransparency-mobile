@@ -76,6 +76,7 @@ class _RegionMoneyScreenState extends ConsumerState<RegionMoneyScreen> {
         await ref.read(scopeProvider.future);
       },
       child: CustomScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -137,8 +138,8 @@ class _RegionMoneyScreenState extends ConsumerState<RegionMoneyScreen> {
                     Expanded(
                       child: Text(
                         _map
-                            ? '${points.length} of ${result.projects.length} lines with coordinates'
-                            : '${filtered.length} of ${result.projects.length} projects',
+                            ? '${groupedInt(points.length)} of ${groupedInt(result.projects.length)} lines with coordinates'
+                            : '${groupedInt(filtered.length)} of ${groupedInt(result.projects.length)} projects',
                         style: AppTheme.meta(context, size: 12.5),
                       ),
                     ),
@@ -210,6 +211,7 @@ class _RegionMoneyScreenState extends ConsumerState<RegionMoneyScreen> {
                   return ProjectCard(
                     item: item,
                     onTap: () {
+                      FocusManager.instance.primaryFocus?.unfocus();
                       logProjectOpen(
                         dataset: item.project.dataset,
                         id: item.project.id,

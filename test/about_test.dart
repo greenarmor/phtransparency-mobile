@@ -1,3 +1,5 @@
+import 'package:bettergov_budget/core/config/app_config.dart';
+import 'package:bettergov_budget/core/firebase/firebase_status.dart';
 import 'package:bettergov_budget/data/models/budget_models.dart';
 import 'package:bettergov_budget/data/models/place.dart';
 import 'package:bettergov_budget/data/services/scope_service.dart';
@@ -55,10 +57,12 @@ Future<void> _pump(
   WidgetTester tester, {
   required PlaceSelection place,
   required ScopeResult scope,
+  bool firebase = false,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
+        firebaseEnabledProvider.overrideWithValue(firebase),
         placeProvider.overrideWith(() => _FixedPlace(place)),
         scopeProvider.overrideWith((ref) async => scope),
         overviewProvider.overrideWith((ref) async => _overview()),
@@ -134,6 +138,50 @@ void main() {
       find.text('Office and legislative-district associations.'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('a build without Firebase says it records nothing', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      place: const NationalPlace(),
+      scope: _scope(note: null, national: true),
+    );
+
+    await tester.scrollUntilVisible(find.text('No usage tracking'), 300);
+    expect(find.text('No usage tracking'), findsOneWidget);
+    expect(find.text('Usage events and crash reports'), findsNothing);
+    expect(find.textContaining('records no usage events'), findsOneWidget);
+  });
+
+  testWidgets('a build with Firebase discloses its events and reports', (
+    tester,
+  ) async {
+    await _pump(
+      tester,
+      place: const NationalPlace(),
+      scope: _scope(note: null, national: true),
+      firebase: true,
+    );
+
+    await tester.scrollUntilVisible(
+      find.text('Usage events and crash reports'),
+      300,
+    );
+    expect(find.text('Usage events and crash reports'), findsOneWidget);
+    expect(find.text('No usage tracking'), findsNothing);
+    expect(find.textContaining('to Firebase'), findsOneWidget);
+  });
+
+  testWidgets('the About page shows the app version', (tester) async {
+    await _pump(
+      tester,
+      place: const NationalPlace(),
+      scope: _scope(note: null, national: true),
+    );
+
+    expect(find.text(AppConfig.appVersion), findsOneWidget);
   });
 
   testWidgets('a region view does not claim district content', (tester) async {

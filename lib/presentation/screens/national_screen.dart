@@ -370,49 +370,53 @@ class _DatasetRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: colors.paper,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: colors.ruleSoft),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              dataset.short,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: colors.ink,
+    // One screen-reader stop per program: "DPWH, NEP …, House …".
+    return Semantics(
+      container: true,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: colors.paper,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: colors.ruleSoft),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                dataset.short,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: colors.ink,
+                ),
               ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                compactPeso(dataset.nepPhp),
-                style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w600,
-                  color: colors.ink3,
-                  fontFeatures: [FontFeature.tabularFigures()],
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'NEP ${compactPeso(dataset.nepPhp)}',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: colors.ink3,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
                 ),
-              ),
-              Text(
-                compactPeso(dataset.housePhp),
-                style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: colors.ink,
-                  fontFeatures: [FontFeature.tabularFigures()],
+                Text(
+                  'House ${compactPeso(dataset.housePhp)}',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: colors.ink,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

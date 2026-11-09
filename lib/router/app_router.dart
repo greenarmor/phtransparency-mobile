@@ -3,15 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../presentation/screens/about_screen.dart';
-import '../presentation/screens/enacted_screen.dart';
 import '../presentation/screens/inserted_screen.dart';
 import '../presentation/screens/map_screen.dart';
 import '../presentation/screens/national_screen.dart';
 import '../presentation/screens/place_picker_screen.dart';
 import '../presentation/screens/project_screen.dart';
-import '../presentation/screens/region_screen.dart';
 import '../presentation/screens/welcome_screen.dart';
 import '../presentation/shell/region_shell.dart';
+
+Page<void> _emptyShellPage(GoRouterState state) =>
+    NoTransitionPage<void>(key: state.pageKey, child: const SizedBox.shrink());
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -45,14 +46,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           location: state.uri.path,
           child: child,
         ),
+        // RegionShell draws both tabs itself, in a swipeable PageView, so the
+        // shell navigator's pages are empty. The navigator still has to be
+        // mounted: go_router walks it on every system back.
         routes: [
           GoRoute(
             path: '/region/:key',
-            builder: (context, state) => const RegionMoneyScreen(),
+            pageBuilder: (context, state) => _emptyShellPage(state),
             routes: [
               GoRoute(
                 path: 'enacted',
-                builder: (context, state) => const EnactedScreen(),
+                pageBuilder: (context, state) => _emptyShellPage(state),
               ),
             ],
           ),

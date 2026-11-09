@@ -101,7 +101,10 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            Padding(
+            Container(
+              // Full width, so the heading lines up with the search box and
+              // the list instead of floating as a centred block.
+              width: double.infinity,
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,8 +273,9 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
               needle.isEmpty
                   ? 'Region totals follow the DPWH region each document '
                         'lists. Districts are available inside a region.'
-                  : 'Search finds the 18 regions. Districts and their offices '
-                        'are available inside a region.',
+                  : 'Search finds the 18 regions and the legislative '
+                        'districts by name. Every district is also reachable '
+                        'inside its region.',
               style: AppTheme.meta(context, size: 11.5),
             ),
           ],

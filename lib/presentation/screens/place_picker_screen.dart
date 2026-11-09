@@ -75,6 +75,7 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
               suffixIcon: _search.text.isEmpty
                   ? null
                   : IconButton(
+                      tooltip: 'Clear search',
                       icon: const Icon(Icons.close, size: 18),
                       onPressed: () {
                         _search.clear();
@@ -133,7 +134,8 @@ class _PlacePickerScreenState extends ConsumerState<PlacePickerScreen> {
                   title: 'No district matches',
                   body: named.isEmpty
                       ? 'The district list could not be read.'
-                      : 'A city or municipality can still appear through the names of its lines - try "Town or city named $named" above.',
+                      : 'No district, province or office is named "$named". '
+                            'Try the province name, or pick the region above.',
                 );
               }
               return Column(

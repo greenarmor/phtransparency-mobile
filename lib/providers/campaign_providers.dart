@@ -112,13 +112,16 @@ class CampaignSummary {
   }
 }
 
+/// The lower-cased text an inserted-projects search looks in.
+String insertedHaystack(ProjectRow row) =>
+    '${row.title} ${row.office ?? ''} ${row.program ?? ''} '
+            '${row.pap ?? ''} ${row.region ?? ''} ${row.dataset}'
+        .toLowerCase();
+
 bool matchesInsertedQuery(ProjectRow row, String query) {
   final needle = query.trim().toLowerCase();
   if (needle.isEmpty) return true;
-  return '${row.title} ${row.office ?? ''} ${row.program ?? ''} '
-          '${row.pap ?? ''} ${row.region ?? ''} ${row.dataset}'
-      .toLowerCase()
-      .contains(needle);
+  return insertedHaystack(row).contains(needle);
 }
 
 List<ProjectRow> filterInsertedProjects(
@@ -128,6 +131,25 @@ List<ProjectRow> filterInsertedProjects(
   for (final row in rows)
     if (matchesInsertedQuery(row, query)) row,
 ];
+
+/// A search index over one fetched list: the haystacks are built once, not
+/// on every keystroke across the ~7,000 House-only lines.
+class InsertedIndex {
+  InsertedIndex(this.rows)
+    : _haystacks = [for (final row in rows) insertedHaystack(row)];
+
+  final List<ProjectRow> rows;
+  final List<String> _haystacks;
+
+  List<ProjectRow> filter(String query) {
+    final needle = query.trim().toLowerCase();
+    if (needle.isEmpty) return rows;
+    return [
+      for (var i = 0; i < rows.length; i++)
+        if (_haystacks[i].contains(needle)) rows[i],
+    ];
+  }
+}
 
 /// Every House-bill-only line across the four programs, largest House amount
 /// first. Fetched once so the inserted-projects page can search in place.
