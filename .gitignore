@@ -60,3 +60,6 @@ firebase.json
 
 # Release binaries are published as GitHub Releases assets, not committed
 releases/*.apk
+ios-native/build/
+xcuserdata/
+.DS_Store
