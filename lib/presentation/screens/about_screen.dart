@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/app_config.dart';
+import '../../core/firebase/firebase_status.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/links.dart';
 import '../../core/utils/format.dart';
@@ -89,14 +90,24 @@ class AboutScreen extends ConsumerWidget {
             builder: (context, overview) => _FactsCard(overview: overview),
           ),
           const SizedBox(height: 10),
-          const NoteCard(
-            title: 'Usage events and crash reports',
-            body:
-                'Opening a project or a tab records an anonymous event, and a '
-                'crash sends a report, both to Firebase. The app has no account, '
-                'no location access, no ads and no tracking beyond those events.',
-            icon: Icons.privacy_tip_outlined,
-          ),
+          if (ref.watch(firebaseEnabledProvider))
+            const NoteCard(
+              title: 'Usage events and crash reports',
+              body:
+                  'Opening a project or a tab records an anonymous event, and a '
+                  'crash sends a report, both to Firebase. The app has no account, '
+                  'no location access, no ads and no tracking beyond those events.',
+              icon: Icons.privacy_tip_outlined,
+            )
+          else
+            const NoteCard(
+              title: 'No usage tracking',
+              body:
+                  'This version records no usage events and sends no crash '
+                  'reports. The app has no account, no location access, no ads '
+                  'and no tracking.',
+              icon: Icons.privacy_tip_outlined,
+            ),
           const SectionHeading(title: 'Rules this app keeps'),
           const _BulletCard(rules: _appRules),
           const SizedBox(height: 10),

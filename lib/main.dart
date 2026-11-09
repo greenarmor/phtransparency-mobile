@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/firebase/firebase_status.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/theme_providers.dart';
 import 'router/app_router.dart';
@@ -18,17 +19,29 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  await _startFirebase();
-  runApp(const ProviderScope(child: BetterGovBudgetApp()));
+  final firebase = await _startFirebase();
+  runApp(
+    ProviderScope(
+      overrides: [firebaseEnabledProvider.overrideWithValue(firebase)],
+      child: const BetterGovBudgetApp(),
+    ),
+  );
 }
 
 /// Firebase is optional. The options come from the platform config a clone
 /// brings itself (`android/app/google-services.json`,
 /// `ios/Runner/GoogleService-Info.plist`); without it initialisation throws,
 /// the app runs with Analytics and Crashlytics off, and nothing else changes.
-Future<void> _startFirebase() async {
+///
+/// Returns whether Firebase started, so the About page can say what this build
+/// does.
+Future<bool> _startFirebase() async {
   try {
     await Firebase.initializeApp();
+  } catch (_) {
+    return false;
+  }
+  try {
     await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(!kDebugMode);
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
       !kDebugMode,
@@ -42,8 +55,10 @@ Future<void> _startFirebase() async {
       return true;
     };
   } catch (_) {
-    return;
+    // Started, but the collection switches could not be set; the platform
+    // defaults apply, so the build still counts as having Firebase.
   }
+  return true;
 }
 
 class BetterGovBudgetApp extends ConsumerWidget {
