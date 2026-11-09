@@ -270,8 +270,9 @@ class _PlaceSheetState extends ConsumerState<PlaceSheet> {
               needle.isEmpty
                   ? 'Region totals follow the DPWH region each document '
                         'lists. Districts are available inside a region.'
-                  : 'Search finds the 18 regions. Districts and their offices '
-                        'are available inside a region.',
+                  : 'Search finds the 18 regions and the legislative '
+                        'districts by name. Every district is also reachable '
+                        'inside its region.',
               style: AppTheme.meta(context, size: 11.5),
             ),
           ],

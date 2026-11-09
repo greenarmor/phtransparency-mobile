@@ -42,6 +42,7 @@ void main() {
   group('compactPeso', () {
     test('formats billions, millions, thousands', () {
       expect(compactPeso(14151587000), '₱14.15B');
+      expect(compactPeso(6793160000000), '₱6,793.16B');
       expect(compactPeso(120000000), '₱120.0M');
       expect(compactPeso(4500), '₱5K');
       expect(compactPeso(900), '₱900');
@@ -83,5 +84,13 @@ void main() {
     expect(titleCasePlace('carmen'), 'Carmen');
     expect(titleCasePlace('  cebu   city '), 'Cebu City');
     expect(titleCasePlace('sta. cruz'), 'Sta. Cruz');
+  });
+
+  test('plural groups thousands like the peso figures do', () {
+    expect(plural(1, 'line'), '1 line');
+    expect(plural(0, 'line'), '0 lines');
+    expect(plural(796, 'project line'), '796 project lines');
+    expect(plural(13460, 'line'), '13,460 lines');
+    expect(plural(2, 'program funded', 'programs funded'), '2 programs funded');
   });
 }

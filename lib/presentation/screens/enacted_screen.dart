@@ -21,7 +21,7 @@ class EnactedScreen extends ConsumerStatefulWidget {
 
 class _EnactedScreenState extends ConsumerState<EnactedScreen> {
   final _search = TextEditingController();
-  int _year = 2026;
+  int _year = AppConfig.gaaYears.last;
 
   @override
   void dispose() {
@@ -48,6 +48,11 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
     final colors = context.colors;
     final rows = data.fundedIn(_year, query: _search.text);
     final total = data.totalFor(_year);
+    // The hero states the year's whole total, so its count must not follow
+    // the search box the way the list below does.
+    final funded = _search.text.trim().isEmpty
+        ? rows.length
+        : data.fundedIn(_year).length;
 
     return RefreshIndicator(
       onRefresh: () async {
@@ -88,7 +93,8 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                 _YearHeader(
                   year: _year,
                   total: total,
-                  rows: rows.length,
+                  rows: funded,
+                  national: data.national,
                   years: AppConfig.gaaYears,
                   totals: data.totals,
                 ),
@@ -122,8 +128,8 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                     Expanded(
                       child: Text(
                         data.national
-                            ? '${rows.length} departments with money in $_year'
-                            : '${rows.length} programs funded in $_year',
+                            ? '${plural(rows.length, 'department')} with money in $_year'
+                            : '${plural(rows.length, 'program')} funded in $_year',
                         style: AppTheme.meta(context, size: 12.5),
                       ),
                     ),
@@ -170,9 +176,9 @@ class _EnactedScreenState extends ConsumerState<EnactedScreen> {
                 const SizedBox(height: 10),
                 Text(
                   data.national
-                      ? '${data.rows.length} departments · national totals, all years.'
-                      : '${data.rows.length} program families across '
-                            '${data.departmentsSearched} departments · matched by name.',
+                      ? '${plural(data.rows.length, 'department')} · national totals, all years.'
+                      : '${plural(data.rows.length, 'program family', 'program families')} across '
+                            '${plural(data.departmentsSearched, 'department')} · matched by name.',
                   style: AppTheme.meta(context, size: 11.5),
                 ),
                 if (data.truncated) ...[
@@ -197,6 +203,7 @@ class _YearHeader extends StatelessWidget {
     required this.year,
     required this.total,
     required this.rows,
+    required this.national,
     required this.years,
     required this.totals,
   });
@@ -204,6 +211,7 @@ class _YearHeader extends StatelessWidget {
   final int year;
   final int total;
   final int rows;
+  final bool national;
   final List<int> years;
   final Map<int, int> totals;
 
@@ -228,7 +236,9 @@ class _YearHeader extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            plural(rows, 'program funded', 'programs funded'),
+            national
+                ? plural(rows, 'department funded', 'departments funded')
+                : plural(rows, 'program funded', 'programs funded'),
             style: TextStyle(
               fontSize: 12,
               color: Colors.white.withValues(alpha: 0.82),
@@ -296,7 +306,7 @@ class _GaaCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '${program.idsCount} line${program.idsCount == 1 ? '' : 's'}',
+                  plural(program.idsCount, 'line'),
                   style: AppTheme.meta(context, size: 11),
                 ),
               ],

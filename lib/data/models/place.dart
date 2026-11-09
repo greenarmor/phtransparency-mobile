@@ -172,9 +172,9 @@ String placeScopeDescription(PlaceSelection place) {
           'Farm-to-market roads, health facilities and irrigation are not '
           'published by region.';
     case DistrictPlace():
-      return 'The DPWH ledger of every office that serves this district, plus '
-          'the 2027 lines whose title names it. A shared office is shown '
-          'whole, never split between the districts it serves.';
+      return 'The DPWH ledger of every office that serves this district. A '
+          'shared office is shown whole, never split between the districts it '
+          'serves.';
     case NamedPlace():
       return 'Every 2027 line whose title names it, across the four programs, '
           'plus the enacted programs whose name names it.';
