@@ -152,6 +152,9 @@ Firebase failures never block the budget screens: initialisation is guarded.
   `android:usesCleartextTraffic="false"`. The only exported components are `MainActivity`
   (launcher) and AndroidX's `ProfileInstallReceiver`, which is guarded by
   `android.permission.DUMP`.
+- **Permissions** - the app itself asks only for `INTERNET`. The advertising-ID permissions
+  that Firebase Analytics merges into the manifest are removed with `tools:node="remove"`:
+  the app shows no ads and never reads the advertising ID.
 - **Release signing** - the upload keystore lives outside git
   (`android/app/upload-keystore.jks` + `android/key.properties`, both ignored). Keep a
   backup: without it you cannot publish an update. Without `key.properties` a release
