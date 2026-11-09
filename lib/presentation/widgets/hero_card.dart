@@ -15,54 +15,18 @@ class HeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final card = isDark ? _surface(true) : _stacked();
 
+    // One upright card in both themes: the same shape, radius, border and
+    // shadow geometry, so light and dark differ only in colour.
     // Its own semantics node, so a screen reader reads the card as one stop
     // instead of running it into the rest of the list item.
-    return Semantics(
-      container: true,
-      child: Transform(
-        alignment: Alignment.center,
-        transform: isDark
-            ? Matrix4.identity()
-            : (Matrix4.identity()
-                ..setEntry(3, 2, 0.0014)
-                ..rotateX(0.075)
-                ..rotateY(-0.06)),
-        child: card,
-      ),
-    );
-  }
-
-  Widget _stacked() {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Positioned(
-          left: 18,
-          right: 4,
-          top: 26,
-          bottom: -18,
-          child: Transform.rotate(
-            angle: -0.018,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(_radius),
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFF0E6D6), Color(0xFFC9BBA0)],
-                ),
-              ),
-            ),
-          ),
-        ),
-        _surface(false),
-      ],
-    );
+    return Semantics(container: true, child: _surface(isDark));
   }
 
   Widget _surface(bool isDark) {
+    // Black reads as depth on navy paper; on cream it turns muddy, so the
+    // light theme casts the card's own navy instead.
+    final shade = isDark ? Colors.black : const Color(0xFF1B2A4A);
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(_radius),
@@ -77,31 +41,18 @@ class HeroCard extends StatelessWidget {
         border: Border.all(
           color: Colors.white.withValues(alpha: isDark ? 0.1 : 0.22),
         ),
-        boxShadow: isDark
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  blurRadius: 24,
-                  offset: const Offset(0, 10),
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.28),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : [
-                BoxShadow(
-                  color: const Color(0xFF1B2A4A).withValues(alpha: 0.36),
-                  blurRadius: 34,
-                  offset: const Offset(0, 18),
-                ),
-                BoxShadow(
-                  color: const Color(0xFFC8262C).withValues(alpha: 0.18),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+        boxShadow: [
+          BoxShadow(
+            color: shade.withValues(alpha: isDark ? 0.5 : 0.24),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: shade.withValues(alpha: isDark ? 0.28 : 0.16),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(_radius),
