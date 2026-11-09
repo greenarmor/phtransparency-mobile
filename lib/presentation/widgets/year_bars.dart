@@ -95,7 +95,7 @@ class YearStrip extends StatelessWidget {
       spacing: 6,
       runSpacing: 6,
       children: [
-        for (final year in AppYears.values)
+        for (final year in sortedYearKeys(totals))
           ChoiceChip(
             label: Text('$year'),
             selected: year == selected,
@@ -107,10 +107,11 @@ class YearStrip extends StatelessWidget {
   }
 }
 
-class AppYears {
-  AppYears._();
-
-  static const values = [2020, 2021, 2022, 2023, 2024, 2025, 2026];
+/// Years exactly as the remote API reports them, oldest first. The year list
+/// is never hardcoded so a newly published fiscal year appears on refresh.
+List<int> sortedYearKeys(Map<int, int> amounts) {
+  final keys = amounts.keys.toList()..sort();
+  return keys;
 }
 
 String yearAmountLabel(Map<int, int> totals, int year) =>

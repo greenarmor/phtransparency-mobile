@@ -329,6 +329,6 @@ const _appRules = <String>[
       'never split between them.',
   'Names are matched, not places surveyed: a line whose title never spells the '
       'place out will not appear under a name search.',
-  'The enacted budgets have no region filter, so a region view says it is '
-      'showing national totals.',
+  'The GAA is enacted for the whole country, so the GAA tab shows the '
+      'national budgets rather than a region\'s slice.',
 ];

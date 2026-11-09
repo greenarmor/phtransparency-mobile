@@ -8,7 +8,7 @@ import '../../data/models/budget_models.dart';
 import '../../data/models/place.dart';
 import '../../providers/budget_providers.dart';
 import '../place_nav.dart';
-import '../screens/enacted_screen.dart';
+import '../screens/gaa_browser_screen.dart';
 import '../screens/region_screen.dart';
 import '../widgets/region_tab_bar.dart';
 
@@ -53,7 +53,7 @@ class _RegionShellState extends ConsumerState<RegionShell> {
   bool _labelFixed = false;
   late final PageController _pager = PageController(initialPage: _index);
 
-  int get _index => widget.location.endsWith('/enacted') ? 1 : 0;
+  int get _index => widget.location.endsWith('/gaa') ? 1 : 0;
 
   @override
   void initState() {
@@ -139,8 +139,8 @@ class _RegionShellState extends ConsumerState<RegionShell> {
       logTabOpen('money');
       context.go('/region/${widget.regionKey}');
     } else {
-      logTabOpen('enacted');
-      context.go('/region/${widget.regionKey}/enacted');
+      logTabOpen('gaa');
+      context.go('/region/${widget.regionKey}/gaa');
     }
   }
 
@@ -209,7 +209,7 @@ class _RegionShellState extends ConsumerState<RegionShell> {
         onPageChanged: _go,
         children: const [
           _KeepAlive(child: RegionMoneyScreen()),
-          _KeepAlive(child: EnactedScreen()),
+          _KeepAlive(child: GaaBrowserView()),
         ],
       ),
       bottomNavigationBar: TweenAnimationBuilder<double>(

@@ -166,9 +166,9 @@ String placeScopeDescription(PlaceSelection place) {
   switch (place) {
     case NationalPlace():
       return 'All four 2027 programs nationwide, the six status groups and '
-          'every region, plus the enacted budgets 2020–2026.';
+          'every region, plus the GAA budgets 2020–2026.';
     case RegionPlace():
-      return 'Every DPWH line under this region, plus the enacted budgets. '
+      return 'Every DPWH line under this region, plus the GAA budgets. '
           'Farm-to-market roads, health facilities and irrigation are not '
           'published by region.';
     case DistrictPlace():
@@ -176,7 +176,6 @@ String placeScopeDescription(PlaceSelection place) {
           'the 2027 lines whose title names it. A shared office is shown '
           'whole, never split between the districts it serves.';
     case NamedPlace():
-      return 'Every 2027 line whose title names it, across the four programs, '
-          'plus the enacted programs whose name names it.';
+      return 'Every 2027 line whose title names it, across the four programs.';
   }
 }

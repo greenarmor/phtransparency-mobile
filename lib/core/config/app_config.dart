@@ -16,6 +16,8 @@ class AppConfig {
       'https://budget-assets.bettergov.ph/hgab/2027/changes-list.csv';
   static const campaignFistUrl =
       'https://budget.bettergov.ph/campaign/fist.webp';
+  static const regionalGaaUrl =
+      'https://transparency.bettergov.ph/data/bir/aggregates/gaa_by_region.json';
 
   static const datasets = <String>['dpwh', 'fmr', 'hfep', 'nia'];
 

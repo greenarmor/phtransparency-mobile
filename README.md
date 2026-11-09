@@ -38,6 +38,24 @@ you to allow installs from this source on first run.
 - The old campaign route and page are gone: the flow is welcome, then the budget.
 
 
+## GAA browser (2020–2026)
+
+An app-bar action on the national screen opens the enacted-budget browser, the mobile
+twin of the [transparency dashboard's budget pages](https://transparency.bettergov.ph/budget):
+
+- **Browser home** (`/gaa`) - the seven-year enacted trend, a searchable list of all
+  38 departments with their seven-year bars and share of the chosen year.
+- **Year page** (`/gaa/:year`) - one fiscal year from `/gaa/years/{year}`: the national
+  total, line-item count, and every department with its exact share.
+- **Department page** (`/gaa/:year/departments/:id`) - agencies and bureaus, the
+  PS/MOOE/FinEx/CO expense-class breakdown, and the department's seven-year history.
+- **Hierarchy drill** (`…/children`) - the same walk the dashboard does: agency →
+  program (P/A/P) → operating unit → fund → expense class, one level per page.
+- **By region** (`/gaa/regional`) - a second source: the transparency dashboard's
+  regional GAA aggregate (DBM-derived). 2020 is only partly broken out and 2026 is not
+  published there yet; unknown-region buckets are shown separately, never summed into
+  a region.
+
 ## Coverage
 
 - **All Philippines** - national totals for the four project programs, the six status
@@ -64,10 +82,25 @@ No backend and no database. Everything comes from the public, read-only, CORS-op
 | `/api/v1/hgab/2027/datasets/{program}/projects?q=…` | Every 2027 line whose title names a place |
 | `/api/v1/hgab/2027/datasets/{program}/projects/{id}` | One project: amounts, pages, match and reading labels |
 | `/api/v1/gaa` + `/gaa/departments` | National enacted totals and the 38 departments |
-| `/api/v1/gaa/departments/{id}/programs?q=…` | Enacted programs naming a place, paged by cursor |
+| `/api/v1/gaa/years/{year}` | One year: national total and every department's share |
+| `/api/v1/gaa/departments/{id}` | Department detail: agencies and expense classes |
+| `/api/v1/gaa/years/{year}/departments/{id}/children?level=…&parent=…` | The hierarchy drill, one level per call |
+| `transparency.bettergov.ph/data/bir/aggregates/gaa_by_region.json` | Regional GAA allocations (DBM-derived, the dashboard's own source) |
 
 The API republishes an independent reading of the published NEP, House Bill 10858 and
 the DBM General Appropriations Acts. Host override: `--dart-define=API_BASE=…`.
+
+## Offline behaviour
+
+The remote API is always the source of truth — every screen fetches over the network
+first, so any upstream data update is picked up on the next load or pull-to-refresh.
+Each successful response is also persisted to a local file cache
+(`api-cache/` under the app-support directory, `lib/core/network/cache_store.dart`).
+When the API cannot be reached (connection errors, timeouts, 5xx), the last saved
+response for that exact request is served instead, and the app bar shows a
+cloud-off icon. Real answers — 400/404 and friends — are never masked by cache, and a
+recovered connection immediately clears the flag and overwrites the cache with the
+newer body. There is no expiry: a cache is only ever replaced by a newer remote copy.
 
 ## Rules the app keeps
 
