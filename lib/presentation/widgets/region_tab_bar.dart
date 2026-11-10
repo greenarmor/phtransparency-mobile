@@ -39,10 +39,10 @@ class RegionTabBar extends StatelessWidget {
               const SizedBox(width: 6),
               Expanded(
                 child: _Tab(
-                  key: const ValueKey('region-tab-enacted'),
-                  label: 'Enacted',
-                  icon: Icons.receipt_long_outlined,
-                  selectedIcon: Icons.receipt_long,
+                  key: const ValueKey('region-tab-gaa'),
+                  label: 'GAA',
+                  icon: Icons.account_balance_outlined,
+                  selectedIcon: Icons.account_balance,
                   selected: index == 1,
                   onTap: () => onSelected(1),
                 ),

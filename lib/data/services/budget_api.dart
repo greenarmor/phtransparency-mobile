@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import '../../core/config/app_config.dart';
 import '../../core/network/api_client.dart';
 import '../models/budget_models.dart';
 
@@ -15,18 +16,6 @@ class Envelope<T> {
   final List<Disclaimer> disclaimers;
 }
 
-class GaaPage {
-  const GaaPage({
-    required this.rows,
-    required this.matched,
-    required this.truncated,
-  });
-
-  final List<GaaProgram> rows;
-  final int matched;
-  final bool truncated;
-}
-
 class BudgetApi {
   BudgetApi(this._client);
 
@@ -36,7 +25,6 @@ class BudgetApi {
   static const pageSize = 200;
   static const maxRows = 4000;
   static const gaaPageSize = 500;
-  static const maxGaaPrograms = 6000;
 
   Future<Envelope<Overview>> overview() async {
     final json = await _client.getJson(_root);
@@ -236,59 +224,36 @@ class BudgetApi {
     return NationalGaa(totals: totals, departments: departments);
   }
 
-  Future<List<GaaDepartment>> gaaDepartments() async {
-    final json = await _client.getJson('/api/v1/gaa/departments');
-    final data = json['data'];
-    if (data is! List) return const [];
-    return data
-        .whereType<Map>()
-        .map((item) => GaaDepartment.fromJson(item.cast<String, dynamic>()))
-        .toList();
+  Future<GaaSnapshot> gaaYearSnapshot(int year) async {
+    final json = await _client.getJson('/api/v1/gaa/years/$year');
+    return GaaSnapshot.fromEnvelope(json, year);
   }
 
-  Future<GaaPage> gaaPrograms(String departmentId, String q) async {
-    final path = '/api/v1/gaa/departments/$departmentId/programs';
-    final firstJson = await _client.getJson(
-      path,
-      query: {'q': q, 'limit': gaaPageSize},
+  Future<GaaDepartmentDetail> gaaDepartment(String departmentId) async {
+    final json = await _client.getJson('/api/v1/gaa/departments/$departmentId');
+    return GaaDepartmentDetail.fromEnvelope(json);
+  }
+
+  Future<GaaChildrenPage> gaaChildren(
+    int year,
+    String departmentId, {
+    String level = 'agencies',
+    String? parent,
+  }) async {
+    final json = await _client.getJson(
+      '/api/v1/gaa/years/$year/departments/$departmentId/children',
+      query: {
+        'level': level,
+        if (parent != null && parent.isNotEmpty) 'parent': parent,
+        'limit': gaaPageSize,
+      },
     );
-    final rows = <GaaProgram>[];
-    final first = firstJson['data'];
-    if (first is List) {
-      rows.addAll(
-        first.whereType<Map>().map(
-          (item) => GaaProgram.fromJson(item.cast<String, dynamic>()),
-        ),
-      );
-    }
+    return GaaChildrenPage.fromEnvelope(json);
+  }
 
-    var cursor = firstJson['next_cursor'] as String?;
-    var truncated = false;
-    while (cursor != null && cursor.isNotEmpty) {
-      if (rows.length >= maxGaaPrograms) {
-        truncated = true;
-        break;
-      }
-      final page = await _client.getJson(
-        path,
-        query: {'q': q, 'limit': gaaPageSize, 'cursor': cursor},
-      );
-      final data = page['data'];
-      if (data is List) {
-        rows.addAll(
-          data.whereType<Map>().map(
-            (item) => GaaProgram.fromJson(item.cast<String, dynamic>()),
-          ),
-        );
-      }
-      cursor = page['next_cursor'] as String?;
-    }
-
-    final meta = firstJson['meta'];
-    final matched = meta is Map
-        ? asInt(meta['matched']) ?? rows.length
-        : rows.length;
-    return GaaPage(rows: rows, matched: matched, truncated: truncated);
+  Future<GaaRegional> gaaRegional() async {
+    final json = await _client.getJson(AppConfig.regionalGaaUrl);
+    return GaaRegional.fromEnvelope(json);
   }
 
   ProjectPage _page(Map<String, dynamic> json) =>

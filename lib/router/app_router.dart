@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/config/app_config.dart';
 import '../presentation/screens/about_screen.dart';
+import '../presentation/screens/gaa_browser_screen.dart';
+import '../presentation/screens/gaa_children_screen.dart';
+import '../presentation/screens/gaa_department_screen.dart';
+import '../presentation/screens/gaa_regional_screen.dart';
+import '../presentation/screens/gaa_year_screen.dart';
 import '../presentation/screens/inserted_screen.dart';
 import '../presentation/screens/map_screen.dart';
 import '../presentation/screens/national_screen.dart';
@@ -21,6 +27,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final path = state.uri.path;
       if (path == '/enacted') return '/';
       if (path == '/campaign') return '/';
+      if (path.endsWith('/enacted')) {
+        return path.replaceFirst(RegExp(r'/enacted$'), '/gaa');
+      }
       if (path.endsWith('/about') && path != '/about') return '/about';
       return null;
     },
@@ -35,6 +44,55 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const InsertedScreen(),
       ),
       GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
+      GoRoute(
+        path: '/gaa',
+        builder: (context, state) => const GaaBrowserScreen(),
+        routes: [
+          GoRoute(
+            path: 'regional',
+            builder: (context, state) => GaaRegionalScreen(
+              initialYear: int.tryParse(
+                state.uri.queryParameters['year'] ?? '',
+              ),
+            ),
+          ),
+          GoRoute(
+            path: ':year',
+            redirect: (context, state) {
+              final year = int.tryParse(
+                state.pathParameters['year'] ?? '',
+              );
+              final valid = year != null && AppConfig.gaaYears.contains(year);
+              if (valid) return null;
+              return '/gaa';
+            },
+            builder: (context, state) => GaaYearScreen(
+              year: int.parse(state.pathParameters['year'] ?? '2026'),
+            ),
+            routes: [
+              GoRoute(
+                path: 'departments/:id',
+                builder: (context, state) => GaaDepartmentScreen(
+                  year: int.parse(state.pathParameters['year'] ?? '2026'),
+                  departmentId: state.pathParameters['id'] ?? '',
+                ),
+                routes: [
+                  GoRoute(
+                    path: 'children',
+                    builder: (context, state) => GaaChildrenScreen(
+                      year: int.parse(state.pathParameters['year'] ?? '2026'),
+                      departmentId: state.pathParameters['id'] ?? '',
+                      level: state.uri.queryParameters['level'] ?? 'agencies',
+                      parent: state.uri.queryParameters['parent'],
+                      label: state.uri.queryParameters['label'],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
       GoRoute(path: '/map', builder: (context, state) => const MapScreen()),
       GoRoute(
         path: '/place',
@@ -55,7 +113,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => _emptyShellPage(state),
             routes: [
               GoRoute(
-                path: 'enacted',
+                path: 'gaa',
                 pageBuilder: (context, state) => _emptyShellPage(state),
               ),
             ],

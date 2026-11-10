@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../core/config/app_config.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/utils/format.dart';
 
 class YearBars extends StatelessWidget {
   const YearBars({
@@ -95,7 +95,7 @@ class YearStrip extends StatelessWidget {
       spacing: 6,
       runSpacing: 6,
       children: [
-        for (final year in AppConfig.gaaYears)
+        for (final year in sortedYearKeys(totals))
           ChoiceChip(
             label: Text('$year'),
             selected: year == selected,
@@ -106,3 +106,13 @@ class YearStrip extends StatelessWidget {
     );
   }
 }
+
+/// Years exactly as the remote API reports them, oldest first. The year list
+/// is never hardcoded so a newly published fiscal year appears on refresh.
+List<int> sortedYearKeys(Map<int, int> amounts) {
+  final keys = amounts.keys.toList()..sort();
+  return keys;
+}
+
+String yearAmountLabel(Map<int, int> totals, int year) =>
+    compactPeso(totals[year]);

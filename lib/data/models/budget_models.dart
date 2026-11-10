@@ -349,50 +349,6 @@ class GaaDepartment {
   }
 }
 
-class GaaProgram {
-  const GaaProgram({
-    required this.departmentId,
-    required this.agencyId,
-    required this.famKey,
-    required this.name,
-    required this.idsCount,
-    required this.years,
-  });
-
-  final String departmentId;
-  final String agencyId;
-  final String famKey;
-  final String name;
-  final int idsCount;
-  final Map<int, GaaYearAmount> years;
-
-  int amountFor(int year) => years[year]?.amount ?? 0;
-
-  bool fundedIn(int year) => amountFor(year) > 0;
-
-  factory GaaProgram.fromJson(Map<String, dynamic> json) {
-    final rawYears = json['years'];
-    final years = <int, GaaYearAmount>{};
-    if (rawYears is Map) {
-      for (final entry in rawYears.entries) {
-        final year = int.tryParse(entry.key.toString());
-        final value = entry.value;
-        if (year != null && value is Map) {
-          years[year] = GaaYearAmount.fromJson(value.cast<String, dynamic>());
-        }
-      }
-    }
-    return GaaProgram(
-      departmentId: json['department_id'] as String? ?? '',
-      agencyId: json['agency_id'] as String? ?? '',
-      famKey: json['fam_key'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      idsCount: asInt(json['ids_count']) ?? 0,
-      years: years,
-    );
-  }
-}
-
 class DatasetTotals {
   const DatasetTotals({
     required this.key,
@@ -770,4 +726,338 @@ class NationalGaa {
   final List<GaaDepartment> departments;
 
   int totalFor(int year) => totals[year] ?? 0;
+}
+
+class GaaSnapshotDepartment {
+  const GaaSnapshotDepartment({
+    required this.id,
+    required this.slug,
+    required this.description,
+    required this.lineItems,
+    required this.amount,
+    required this.share,
+  });
+
+  final String id;
+  final String slug;
+  final String description;
+  final int lineItems;
+  final int amount;
+  final double share;
+
+  factory GaaSnapshotDepartment.fromJson(Map<String, dynamic> json) =>
+      GaaSnapshotDepartment(
+        id: json['id'] as String? ?? '',
+        slug: json['slug'] as String? ?? '',
+        description: json['description'] as String? ?? '',
+        lineItems: asInt(json['line_items']) ?? 0,
+        amount: asInt(json['amount']) ?? 0,
+        share: asDouble(json['share']) ?? 0,
+      );
+}
+
+class GaaSnapshot {
+  const GaaSnapshot({
+    required this.year,
+    required this.totalAmount,
+    required this.totalLineItems,
+    required this.departments,
+  });
+
+  final int year;
+  final int totalAmount;
+  final int totalLineItems;
+  final List<GaaSnapshotDepartment> departments;
+
+  static GaaSnapshot fromEnvelope(Map<String, dynamic> json, int year) {
+    final data = json['data'] is Map
+        ? (json['data'] as Map).cast<String, dynamic>()
+        : const <String, dynamic>{};
+    final total = data['total'] is Map
+        ? (data['total'] as Map).cast<String, dynamic>()
+        : const <String, dynamic>{};
+    final departments = data['departments'];
+    final rows = departments is List
+        ? departments
+              .whereType<Map>()
+              .map(
+                (item) =>
+                    GaaSnapshotDepartment.fromJson(item.cast<String, dynamic>()),
+              )
+              .toList()
+        : <GaaSnapshotDepartment>[];
+    rows.sort((a, b) => b.amount.compareTo(a.amount));
+    return GaaSnapshot(
+      year: asInt(total['year']) ?? year,
+      totalAmount: asInt(total['amount']) ?? 0,
+      totalLineItems: asInt(total['line_items']) ?? 0,
+      departments: rows,
+    );
+  }
+}
+
+class GaaAgency {
+  const GaaAgency({
+    required this.id,
+    required this.slug,
+    required this.description,
+    required this.departmentId,
+    required this.years,
+  });
+
+  final String id;
+  final String slug;
+  final String description;
+  final String departmentId;
+  final Map<int, GaaYearAmount> years;
+
+  int amountFor(int year) => years[year]?.amount ?? 0;
+
+  factory GaaAgency.fromJson(Map<String, dynamic> json) {
+    final raw = json['years'];
+    final years = <int, GaaYearAmount>{};
+    if (raw is Map) {
+      for (final entry in raw.entries) {
+        final year = int.tryParse(entry.key.toString());
+        final value = entry.value;
+        if (year != null && value is Map) {
+          years[year] = GaaYearAmount.fromJson(value.cast<String, dynamic>());
+        }
+      }
+    }
+    return GaaAgency(
+      id: json['id'] as String? ?? '',
+      slug: json['slug'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      departmentId: json['department_id'] as String? ?? '',
+      years: years,
+    );
+  }
+}
+
+class GaaExpenseClass {
+  const GaaExpenseClass({
+    required this.code,
+    required this.label,
+    required this.years,
+  });
+
+  final String code;
+  final String label;
+  final Map<int, GaaYearAmount> years;
+
+  int amountFor(int year) => years[year]?.amount ?? 0;
+
+  static const codeNames = <String, String>{
+    '1': 'Personnel Services',
+    '2': 'Maintenance and Other Operating Expenses',
+    '3': 'Financial Expenses',
+    '6': 'Capital Outlays',
+  };
+
+  factory GaaExpenseClass.fromJson(Map<String, dynamic> json) {
+    final raw = json['years'];
+    final years = <int, GaaYearAmount>{};
+    if (raw is Map) {
+      for (final entry in raw.entries) {
+        final year = int.tryParse(entry.key.toString());
+        final value = entry.value;
+        if (year != null && value is Map) {
+          years[year] = GaaYearAmount.fromJson(value.cast<String, dynamic>());
+        }
+      }
+    }
+    final code = json['expense_code']?.toString() ?? '';
+    return GaaExpenseClass(
+      code: code,
+      label: json['label'] as String? ?? codeNames[code] ?? code,
+      years: years,
+    );
+  }
+}
+
+class GaaDepartmentDetail {
+  const GaaDepartmentDetail({
+    required this.department,
+    required this.agencies,
+    required this.expenseClasses,
+  });
+
+  final GaaDepartment department;
+  final List<GaaAgency> agencies;
+  final List<GaaExpenseClass> expenseClasses;
+
+  static GaaDepartmentDetail fromEnvelope(Map<String, dynamic> json) {
+    final data = json['data'] is Map
+        ? (json['data'] as Map).cast<String, dynamic>()
+        : const <String, dynamic>{};
+    final department = data['department'] is Map
+        ? GaaDepartment.fromJson(
+            (data['department'] as Map).cast<String, dynamic>(),
+          )
+        : const GaaDepartment(id: '', description: '', years: {});
+    final agencies = data['agencies'];
+    final expenseClasses = data['expense_classes'];
+    return GaaDepartmentDetail(
+      department: department,
+      agencies: agencies is List
+          ? agencies
+                .whereType<Map>()
+                .map(
+                  (item) => GaaAgency.fromJson(item.cast<String, dynamic>()),
+                )
+                .toList()
+          : const <GaaAgency>[],
+      expenseClasses: expenseClasses is List
+          ? expenseClasses
+                .whereType<Map>()
+                .map(
+                  (item) => GaaExpenseClass.fromJson(item.cast<String, dynamic>()),
+                )
+                .toList()
+          : const <GaaExpenseClass>[],
+    );
+  }
+}
+
+class GaaChildRow {
+  const GaaChildRow({
+    required this.id,
+    required this.slug,
+    required this.description,
+    required this.departmentId,
+    required this.year,
+    required this.lineItems,
+    required this.amount,
+  });
+
+  final String id;
+  final String slug;
+  final String description;
+  final String departmentId;
+  final int year;
+  final int lineItems;
+  final int amount;
+
+  factory GaaChildRow.fromJson(Map<String, dynamic> json) => GaaChildRow(
+    id: json['id']?.toString() ?? '',
+    slug: json['slug'] as String? ?? '',
+    description: json['description'] as String? ?? '',
+    departmentId: json['department_id'] as String? ?? '',
+    year: asInt(json['year']) ?? 0,
+    lineItems: asInt(json['line_items']) ?? 0,
+    amount: asInt(json['amount']) ?? 0,
+  );
+}
+
+class GaaChildrenPage {
+  const GaaChildrenPage({
+    required this.level,
+    required this.rows,
+    required this.matched,
+    required this.matchedAmount,
+  });
+
+  final String level;
+  final List<GaaChildRow> rows;
+  final int matched;
+  final int matchedAmount;
+
+  static GaaChildrenPage fromEnvelope(Map<String, dynamic> json) {
+    final meta = json['meta'] is Map
+        ? (json['meta'] as Map).cast<String, dynamic>()
+        : const <String, dynamic>{};
+    final data = json['data'];
+    final rows = data is List
+        ? data
+              .whereType<Map>()
+              .map((item) => GaaChildRow.fromJson(item.cast<String, dynamic>()))
+              .toList()
+        : <GaaChildRow>[];
+    return GaaChildrenPage(
+      level: meta['level'] as String? ?? '',
+      rows: rows,
+      matched: asInt(meta['matched']) ?? rows.length,
+      matchedAmount: asInt(meta['matched_amount']) ?? 0,
+    );
+  }
+}
+
+class GaaRegionAllocation {
+  const GaaRegionAllocation({required this.region, required this.amount});
+
+  final String region;
+  final int amount;
+
+  bool get isUnknown =>
+      region.toLowerCase().contains('unknown') || region == 'Region 19';
+
+  factory GaaRegionAllocation.fromJson(Map<String, dynamic> json) =>
+      GaaRegionAllocation(
+        region: json['region'] as String? ?? '',
+        amount: asInt(json['gaa']) ?? 0,
+      );
+}
+
+class GaaRegionYear {
+  const GaaRegionYear({
+    required this.year,
+    required this.regions,
+    required this.total,
+  });
+
+  final int year;
+  final List<GaaRegionAllocation> regions;
+  final int total;
+
+  factory GaaRegionYear.fromJson(Map<String, dynamic> json) {
+    final regions = json['regions'];
+    final rows = regions is List
+        ? regions
+              .whereType<Map>()
+              .map(
+                (item) =>
+                    GaaRegionAllocation.fromJson(item.cast<String, dynamic>()),
+              )
+              .toList()
+        : <GaaRegionAllocation>[];
+    rows.sort((a, b) => b.amount.compareTo(a.amount));
+    return GaaRegionYear(
+      year: asInt(json['year']) ?? 0,
+      regions: rows,
+      total: asInt(json['total']) ?? 0,
+    );
+  }
+}
+
+class GaaRegional {
+  const GaaRegional({required this.years, required this.source});
+
+  final List<GaaRegionYear> years;
+  final String source;
+
+  static GaaRegional fromEnvelope(Map<String, dynamic> json) {
+    final metadata = json['metadata'] is Map
+        ? (json['metadata'] as Map).cast<String, dynamic>()
+        : const <String, dynamic>{};
+    final data = json['data'];
+    final years = data is List
+        ? data
+              .whereType<Map>()
+              .map((item) => GaaRegionYear.fromJson(item.cast<String, dynamic>()))
+              .toList()
+        : <GaaRegionYear>[];
+    years.sort((a, b) => a.year.compareTo(b.year));
+    return GaaRegional(
+      years: years,
+      source: metadata['source'] as String? ?? '',
+    );
+  }
+
+  GaaRegionYear? forYear(int year) {
+    for (final entry in years) {
+      if (entry.year == year) return entry;
+    }
+    return null;
+  }
 }
