@@ -70,7 +70,9 @@ class BetterGovBudgetApp extends ConsumerWidget {
       title: 'BetterGov Budget',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
-      themeMode: ThemeMode.light,
+      darkTheme: AppTheme.dark(),
+      // Follow the phone: dark system setting -> dark app, light -> light.
+      themeMode: ThemeMode.system,
       routerConfig: router,
     );
   }

@@ -7,7 +7,7 @@ class AppConfig {
   );
 
   static const appName = 'BetterGov Budget';
-  static const appVersion = '1.0.2 (3)';
+  static const appVersion = '1.0.3 (4)';
   static const fiscalYear = 2027;
   static const sourceUrl = 'https://budget.bettergov.ph/hgab/2027/overview';
   static const docsUrl = 'https://budget.bettergov.ph/docs';

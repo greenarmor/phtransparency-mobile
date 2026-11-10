@@ -1,6 +1,8 @@
 import 'package:bettergov_budget/core/theme/app_theme.dart';
+import 'package:bettergov_budget/main.dart';
 import 'package:bettergov_budget/presentation/widgets/app_logo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -81,5 +83,18 @@ void main() {
     );
 
     expect(seen, AppColors.dark);
+  });
+
+  testWidgets('the app follows the system theme setting', (tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(child: BetterGovBudgetApp()),
+    );
+    await tester.pump();
+
+    final app = tester.widget<MaterialApp>(find.byType(MaterialApp));
+    expect(app.themeMode, ThemeMode.system);
+    expect(app.theme, isNotNull);
+    expect(app.darkTheme!.brightness, Brightness.dark);
+    expect(tester.takeException(), isNull);
   });
 }
