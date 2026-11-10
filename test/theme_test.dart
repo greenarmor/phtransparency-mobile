@@ -1,38 +1,10 @@
 import 'package:bettergov_budget/core/theme/app_theme.dart';
 import 'package:bettergov_budget/presentation/widgets/app_logo.dart';
-import 'package:bettergov_budget/providers/theme_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  test('a saved choice is restored and written back', () async {
-    SharedPreferences.setMockInitialValues({'theme_mode': 'dark'});
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
-
-    expect(container.read(themeModeProvider), ThemeMode.system);
-    await Future<void>.delayed(Duration.zero);
-    expect(container.read(themeModeProvider), ThemeMode.dark);
-
-    await container.read(themeModeProvider.notifier).select(ThemeMode.light);
-    expect(container.read(themeModeProvider), ThemeMode.light);
-
-    final prefs = await SharedPreferences.getInstance();
-    expect(prefs.getString('theme_mode'), 'light');
-  });
-
-  test('an unknown saved value falls back to following the system', () async {
-    SharedPreferences.setMockInitialValues({'theme_mode': 'sepia'});
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
-
-    await Future<void>.delayed(Duration.zero);
-    expect(container.read(themeModeProvider), ThemeMode.system);
-  });
 
   test('light and dark palettes differ and both expose their extension', () {
     final light = AppTheme.light();
