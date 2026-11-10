@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/config/app_config.dart';
 import '../../core/theme/app_theme.dart';
-import '../../providers/theme_providers.dart';
 import '../widgets/app_logo.dart';
 
 class _SplashPalette {
@@ -121,7 +119,7 @@ class _WelcomeBody extends StatelessWidget {
         const SizedBox(height: 14),
         const _SplashHero(),
         const SizedBox(height: 22),
-        const _ThemeChooser(),
+        const _SplashNote(),
         const SizedBox(height: 22),
         SizedBox(
           width: double.infinity,
@@ -182,15 +180,19 @@ class _SplashHero extends StatelessWidget {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         return Stack(
-          clipBehavior: Clip.none,
+          clipBehavior: Clip.hardEdge,
           children: [
-            Positioned(
-              top: -width * 0.06,
-              right: -width * 0.14,
-              child: SizedBox(
-                width: width * 0.88,
-                height: width * 1.12,
-                child: const _FistBackground(),
+            Positioned.fill(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FractionallySizedBox(
+                  widthFactor: 0.66,
+                  heightFactor: 0.9,
+                  child: Padding(
+                    padding: EdgeInsets.only(right: width * 0.02),
+                    child: const _FistBackground(),
+                  ),
+                ),
               ),
             ),
             const Positioned.fill(child: _TitleScrim()),
@@ -255,11 +257,7 @@ class _TitleScrim extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
-          colors: [
-            _SplashPalette.cream,
-            Color(0xE6F3EFE4),
-            Color(0x00F3EFE4),
-          ],
+          colors: [_SplashPalette.cream, Color(0xE6F3EFE4), Color(0x00F3EFE4)],
           stops: [0.0, 0.38, 0.78],
         ),
       ),
@@ -396,7 +394,10 @@ class _Countdown extends StatelessWidget {
                   ? 'Opening the budget…'
                   : 'Opening the budget automatically in $remaining s',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: _SplashPalette.inkSoft),
+              style: const TextStyle(
+                fontSize: 12,
+                color: _SplashPalette.inkSoft,
+              ),
             ),
           ],
         );
@@ -405,62 +406,28 @@ class _Countdown extends StatelessWidget {
   }
 }
 
-class _ThemeChooser extends ConsumerWidget {
-  const _ThemeChooser();
+class _SplashNote extends StatelessWidget {
+  const _SplashNote();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final mode = ref.watch(themeModeProvider);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Appearance',
-          style: TextStyle(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w700,
-            color: _SplashPalette.ink,
-          ),
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(top: 12),
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: Color(0xFFD4CFC3))),
+      ),
+      child: const Text(
+        'DPWH, farm-to-market roads, health facilities and irrigation. '
+        'Inserted first, then increased, then decreased, largest first. '
+        'DEO: district engineering office, the DPWH unit that carries out '
+        'projects in its area. Its number is its own and need not match the '
+        'legislative district it serves.',
+        style: TextStyle(
+          fontSize: 12.5,
+          height: 1.45,
+          color: _SplashPalette.inkSoft,
         ),
-        const SizedBox(height: 8),
-        SizedBox(
-          width: double.infinity,
-          child: SegmentedButton<ThemeMode>(
-            segments: const [
-              ButtonSegment(
-                value: ThemeMode.system,
-                icon: Icon(Icons.brightness_auto_outlined, size: 16),
-                label: Text('System'),
-              ),
-              ButtonSegment(
-                value: ThemeMode.light,
-                icon: Icon(Icons.light_mode_outlined, size: 16),
-                label: Text('Light'),
-              ),
-              ButtonSegment(
-                value: ThemeMode.dark,
-                icon: Icon(Icons.dark_mode_outlined, size: 16),
-                label: Text('Dark'),
-              ),
-            ],
-            selected: {mode},
-            showSelectedIcon: false,
-            style: ButtonStyle(
-              visualDensity: VisualDensity.compact,
-              // The poster art runs behind this row: opaque segments keep the
-              // Light and Dark labels off the red halftone.
-              backgroundColor: WidgetStateProperty.resolveWith(
-                (states) => states.contains(WidgetState.selected)
-                    ? null
-                    : _SplashPalette.cream,
-              ),
-            ),
-            onSelectionChanged: (value) =>
-                ref.read(themeModeProvider.notifier).select(value.first),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

@@ -56,7 +56,7 @@ void main() {
     await tester.pumpWidget(_app(index: 0, onSelected: (i) => selected = i));
 
     final cell = tester.getRect(
-      find.byKey(const ValueKey('region-tab-enacted')),
+      find.byKey(const ValueKey('region-tab-gaa')),
     );
     await tester.tapAt(Offset(cell.left + 12, cell.center.dy));
     await tester.pumpAndSettle();
@@ -76,15 +76,15 @@ void main() {
     );
 
     expect(_highlight(tester, 'money'), 1);
-    expect(_highlight(tester, 'enacted'), 0);
+    expect(_highlight(tester, 'gaa'), 0);
 
     await tester.tapAt(
-      tester.getCenter(find.byKey(const ValueKey('region-tab-enacted'))),
+      tester.getCenter(find.byKey(const ValueKey('region-tab-gaa'))),
     );
     await tester.pumpAndSettle();
 
     expect(selected, 1);
     expect(_highlight(tester, 'money'), 0);
-    expect(_highlight(tester, 'enacted'), 1);
+    expect(_highlight(tester, 'gaa'), 1);
   });
 }

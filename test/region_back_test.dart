@@ -1,9 +1,9 @@
 import 'package:bettergov_budget/core/theme/app_theme.dart';
 import 'package:bettergov_budget/data/models/budget_models.dart';
 import 'package:bettergov_budget/data/models/place.dart';
-import 'package:bettergov_budget/data/services/gaa_service.dart';
 import 'package:bettergov_budget/data/services/scope_service.dart';
 import 'package:bettergov_budget/providers/budget_providers.dart';
+import 'package:bettergov_budget/providers/gaa_browser_providers.dart';
 import 'package:bettergov_budget/router/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,16 +39,9 @@ final _scope = ScopeResult(
   note: null,
 );
 
-const _gaa = GaaDataset(
-  rows: [],
-  totals: {},
-  q: '',
-  departmentsSearched: 0,
-  matchedFamilies: 0,
-  truncated: false,
-  national: true,
-  scopeLabel: 'All Philippines',
-  regionFallback: true,
+final _gaa = GaaBrowserData(
+  totals: const {2026: 1000},
+  departments: const [],
 );
 
 /// Runs the real app router, so the region ShellRoute is the one the app
@@ -71,7 +64,7 @@ Future<GoRouter> _open(WidgetTester tester, String location) async {
       ),
       regionsProvider.overrideWith((ref) async => _regions),
       scopeProvider.overrideWith((ref) async => _scope),
-      gaaProvider.overrideWith((ref) async => _gaa),
+      gaaBrowserProvider.overrideWith((ref) async => _gaa),
     ],
   );
   addTearDown(container.dispose);
@@ -137,10 +130,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('system back on the Enacted tab returns to Money first', (
+  testWidgets('system back on the GAA tab returns to Money first', (
     tester,
   ) async {
-    final router = await _open(tester, '/region/VII/enacted');
+    final router = await _open(tester, '/region/VII/gaa');
     final platform = _watchPlatform(tester);
 
     await tester.binding.handlePopRoute();

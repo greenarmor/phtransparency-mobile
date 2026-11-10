@@ -52,6 +52,28 @@ class NationalScreen extends ConsumerWidget {
           ],
         ),
         actions: [
+          ValueListenableBuilder<bool>(
+            valueListenable: ref.watch(servingFromCacheProvider),
+            builder: (context, fromCache, _) {
+              if (!fromCache) return const SizedBox.shrink();
+              return IconButton(
+                tooltip: 'Saved data · the API is unreachable',
+                onPressed: null,
+                icon: Icon(
+                  Icons.cloud_off_outlined,
+                  color: context.colors.neutral,
+                ),
+              );
+            },
+          ),
+          IconButton(
+            tooltip: 'GAA budgets',
+            onPressed: () {
+              logTabOpen('gaa');
+              context.push('/gaa');
+            },
+            icon: const Icon(Icons.account_balance),
+          ),
           IconButton(
             tooltip: 'Inserted projects',
             color: context.colors.accent,
