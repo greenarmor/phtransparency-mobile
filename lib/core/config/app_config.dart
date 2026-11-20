@@ -19,7 +19,27 @@ class AppConfig {
   static const regionalGaaUrl =
       'https://transparency.bettergov.ph/data/bir/aggregates/gaa_by_region.json';
 
-  static const datasets = <String>['dpwh', 'fmr', 'hfep', 'nia'];
+  // Official government sources, shown in the app as Play's Misleading Claims
+  // policy requires for apps that present government information.
+  static const officialSources = <({String label, String publisher, String url})>[
+    (
+      label: 'National Expenditure Program FY 2027',
+      publisher: 'Department of Budget and Management',
+      url: 'https://www.dbm.gov.ph/index.php/2027/national-expenditure-program-fy-2027',
+    ),
+    (
+      label: 'General Appropriations Act FY 2026',
+      publisher: 'Department of Budget and Management',
+      url: 'https://www.dbm.gov.ph/index.php/2026/general-appropriations-act-gaa-fy-2026',
+    ),
+    (
+      label: 'House Bill No. 10858, General Appropriations Bill FY 2027',
+      publisher: 'House of Representatives',
+      url: 'https://www.congress.gov.ph',
+    ),
+  ];
+
+  static const datasets =<String>['dpwh', 'fmr', 'hfep', 'nia'];
 
   static const gaaYears = <int>[2020, 2021, 2022, 2023, 2024, 2025, 2026];
 }
