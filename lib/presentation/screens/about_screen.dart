@@ -82,6 +82,8 @@ class AboutScreen extends ConsumerWidget {
             'is on, and the enacted budgets 2020–2026.',
             style: AppTheme.meta(context, size: 13),
           ),
+          const SectionHeading(title: 'Official government sources'),
+          const _OfficialSourcesCard(),
           const SizedBox(height: 12),
           AsyncView<Overview>(
             value: ref.watch(overviewProvider),
@@ -133,7 +135,8 @@ class AboutScreen extends ConsumerWidget {
           const SizedBox(height: 18),
           Text(
             'Built on the public BetterGov.ph Budget API. '
-            'Independent and unofficial.',
+            'Independent and unofficial: not affiliated with the Philippine '
+            'government, the DBM, the House of Representatives or any agency.',
             style: AppTheme.meta(context, size: 11.5),
           ),
         ],
@@ -231,6 +234,83 @@ class _FactsCard extends StatelessWidget {
                 ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _OfficialSourcesCard extends StatelessWidget {
+  const _OfficialSourcesCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'The figures come from these documents, published by the '
+              'Philippine government. Check any figure against the original.',
+              style: AppTheme.meta(context, size: 12.5),
+            ),
+            const SizedBox(height: 6),
+            for (final source in AppConfig.officialSources)
+              InkWell(
+                onTap: () => openExternal(source.url),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Icon(
+                          Icons.account_balance_outlined,
+                          size: 16,
+                          color: colors.accent,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              source.label,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: colors.ink,
+                              ),
+                            ),
+                            Text(
+                              source.publisher,
+                              style: AppTheme.meta(context, size: 12),
+                            ),
+                            Text(
+                              source.url,
+                              style: TextStyle(
+                                fontSize: 12,
+                                height: 1.4,
+                                color: colors.accent,
+                                decoration: TextDecoration.underline,
+                                decorationColor: colors.accent,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(Icons.open_in_new, size: 14, color: colors.ink2),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),
